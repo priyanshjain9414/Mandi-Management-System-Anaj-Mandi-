@@ -1,4 +1,4 @@
-# 🌾 Mandi Management System (Anaj Mandi)
+#  Mandi Management System (Anaj Mandi)
 
 A full-stack web application designed to **digitize traditional Anaj Mandi (agricultural market) operations** by managing farmers, traders, crop inventory, payments, settlements, and financial workflows in a **secure, transparent, and auditable** manner.
 
@@ -6,7 +6,7 @@ This system replaces manual ledger-based accounting with a **robust digital ledg
 
 ---
 
-## 📄 Abstract
+##  Abstract
 
 The **Mandi Management System (Anaj Mandi)** is a web-based solution developed to modernize and streamline real-world agricultural trading operations.  
 Traditional mandis rely heavily on handwritten ledgers, which are error-prone, difficult to audit, and unsafe in case of disputes.
@@ -21,7 +21,7 @@ Special emphasis is placed on **financial safety**, with advanced logic for **pa
 
 ---
 
-## 🎯 Objective
+##  Objective
 
 - Eliminate manual bookkeeping errors  
 - Maintain accurate and consistent financial records  
@@ -32,7 +32,7 @@ Special emphasis is placed on **financial safety**, with advanced logic for **pa
 
 ---
 
-## 🏗️ System Description
+##  System Description
 
 The system is designed around the daily workflow of **Anaj Mandi shop owners (Adatiyas)**.
 
@@ -46,7 +46,7 @@ A key design principle is **data immutability for financial records**.
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 ### Farmer & Trader Management
 - Add, edit, and manage farmers and traders
@@ -85,7 +85,7 @@ A key design principle is **data immutability for financial records**.
 
 ---
 
-## 🧰 Technology Stack
+##  Technology Stack
 
 - Backend: Node.js, Express.js
 - Database: MongoDB (Mongoose)
@@ -94,7 +94,7 @@ A key design principle is **data immutability for financial records**.
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 models/  
 routes/  
@@ -107,16 +107,29 @@ README.md
 
 ---
 
-## 🚀 Installation & Setup
+##  Installation & Setup
 
-1. Clone the repository  
-2. Install dependencies using npm install  
-3. Configure environment variables  
-4. Start the server using npm start  
+1. Clone the repository:
 
+```bash
+git clone https://github.com/your-username/mandi-management-system.git
+```
+2. Install dependencies using npm install:
+```bash
+npm install
+```
+3. Configure environment variables
+```bash
+PORT=8080
+ATLASDB_URL=your_mongodb_connection_string
+SESSION_SECRET=your_secret_key
+```
+5. Start the server using npm start  
+```bash
+npm start
 ---
 
-## 📌 Use Cases
+##  Use Cases
 
 - Digital ledger for Anaj Mandi owners
 - Agricultural trade accounting
@@ -125,7 +138,7 @@ README.md
 
 ---
 
-## 🔮 Future Scope
+##  Future Scope
 
 - Role-based access control
 - Analytics dashboard
@@ -135,6 +148,26 @@ README.md
 
 ---
 
-## ✅ Conclusion
+## Contribution
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create your branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add your feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
+
+---
+
+##  Conclusion
 
 The Mandi Management System provides a secure, real-world-ready digital solution for agricultural trade management with audit-safe financial workflows.
+
+---
+
+## Contact
+
+**Author:** Priyansh Jain
+- **GitHub:** [@priyanshjain9414](https://github.com/priyanshjain9414)
+- **Email:** [priyanshjain903@gmail.com](mailto:priyanshjain903@gmail.com)

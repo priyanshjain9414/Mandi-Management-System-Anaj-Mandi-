@@ -1,5 +1,7 @@
 #  Mandi Management System (Anaj Mandi)
 
+See Online [Mandi-Management-System(Anaj-Mandi)](https://mandi-management-system-anaj-mandi.onrender.com/)
+
 A full-stack web application designed to **digitize traditional Anaj Mandi (agricultural market) operations** by managing farmers, traders, crop inventory, payments, settlements, and financial workflows in a **secure, transparent, and auditable** manner.
 
 This system replaces manual ledger-based accounting with a **robust digital ledger**, ensuring accuracy, traceability, and long-term data safety — even in complex scenarios like **payment reversals and controlled deletions**.
@@ -140,6 +142,9 @@ npm start
 
 ---
 
+##  Live Demo
+ [Mandi-Management-System(Anaj-Mandi)](https://mandi-management-system-anaj-mandi.onrender.com/)
+---
 ##  Future Scope
 
 - Role-based access control

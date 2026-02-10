@@ -1,0 +1,105 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <!-- PAGE HEADER -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle rounded">
+      <h4 class="mb-1 text-success fw-bold text-center">
+        <i class="fa-solid fa-warehouse me-2"></i> Crop Inventory
+      </h4>
+      <p class="text-muted text-center mb-0">Current stock of all crops</p>
+    </div>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <form method="GET" action="/inventory">
+        <div class="input-group">
+          <input
+            type="text"
+            name="search"
+            value="<%= search || '' %>"
+            class="form-control"
+            placeholder="Search by Crop Name"
+          />
+          <button class="btn btn-success px-4">
+            <i class="fa-solid fa-magnifying-glass me-1"></i> Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- INVENTORY LIST -->
+  <% if (inventories.length === 0) { %>
+  <div class="alert alert-success text-center shadow-sm">
+    <strong> No Inventory Found</strong>
+  </div>
+  <% } else { %>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-success text-white fw-semibold rounded-top">
+      Inventory Crop List
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-success">
+          <tr>
+            <th>Crop</th>
+            <th>Total Stock</th>
+            <th>Buy Qty</th>
+            <th>Sell Qty</th>
+            <th>Avg Buy ₹</th>
+            <th>Avg Sell ₹</th>
+            <th>
+              <i class="fa-solid fa-arrow-up text-danger me-1"></i>Payable (To
+              Farmer)
+            </th>
+            <th>
+              <i class="fa-solid fa-arrow-down text-success me-1"></i>Receivable
+              (From Buyer)
+            </th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% inventories.forEach(inv => { %>
+          <tr>
+            <td>
+              <span class="badge bg-success rounded-pill px-3 py-2 fs-6">
+                <%= inv.cropName %>
+              </span>
+            </td>
+
+            <td class="fw-semibold"><%= inv.totalInStock %></td>
+
+            <td><%= inv.totalBuyQuantity %></td>
+            <td><%= inv.totalSellQuantity %></td>
+
+            <td>₹ <%= inv.averageBuyPrice.toFixed(2) %></td>
+            <td>₹ <%= inv.averageSellPrice.toFixed(2) %></td>
+
+            <td class="text-danger">₹ <%= inv.paymentGivePending %></td>
+
+            <td class="text-success">₹ <%= inv.paymentReceivePending %></td>
+
+            <td class="text-center">
+              <a
+                href="/inventory/<%= inv.inventoryId %>"
+                class="btn btn-sm btn-success px-3"
+              >
+                Details
+              </a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% } %>
+</div>

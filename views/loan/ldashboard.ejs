@@ -1,0 +1,371 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <!-- PAGE HEADER -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle rounded">
+      <h4 class="mb-1 text-success fw-bold text-center">
+        <i class="fa-solid fa-hand-holding-dollar me-2"></i>
+        Loans of Farmer :- <%= farmer.name %> (<%= farmer.farmerId %>)
+      </h4>
+      <p class="text-muted text-center mb-0">Loan payment details</p>
+    </div>
+  </div>
+
+  <!-- ===== LOAN RECEIPT BUTTONS ===== -->
+  <div class="d-flex justify-content-center gap-3 flex-wrap mb-3">
+    <!-- ALL LOANS -->
+    <a
+      href="/receipt/loans/all?farmerId=<%= farmer.farmerId %>"
+      target="_blank"
+      class="btn btn-outline-dark px-4"
+    >
+      <i class="fa-solid fa-receipt me-1"></i> All Loans Receipt
+    </a>
+
+    <!-- PENDING LOANS -->
+    <a
+      href="/receipt/loans/pending?farmerId=<%= farmer.farmerId %>"
+      target="_blank"
+      class="btn btn-outline-warning px-4"
+    >
+      <i class="fa-solid fa-hourglass-half me-1"></i> Pending Loans Receipt
+    </a>
+
+    <!-- PAID LOANS -->
+    <a
+      href="/receipt/loans/paid?farmerId=<%= farmer.farmerId %>"
+      target="_blank"
+      class="btn btn-outline-success px-4"
+    >
+      <i class="fa-solid fa-circle-check me-1"></i> Paid Loans Receipt
+    </a>
+  </div>
+
+  <!-- ================= TOP SUMMARY ================= -->
+  <div class="row text-center mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6>Total Loan Amount</h6>
+          <h4 class="text-primary">₹ <%= totalLoanAmount %></h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6>Total Paid</h6>
+          <h4 class="text-success">₹ <%= totalPaid %></h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h6>Total Pending</h6>
+          <h4 class="text-danger">₹ <%= totalPending %></h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PENDING LOANS ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white fw-semibold">
+      Pending Loans
+    </div>
+
+    <div class="card-body">
+      <% if (pendingLoans.length === 0) { %>
+      <div class="alert alert-success text-center mb-0">No pending loans</div>
+      <% } else { %>
+
+      <form action="/loan/payment-form" method="POST">
+        <input type="hidden" name="farmerId" value="<%= farmer.farmerId %>" />
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="text-success border-bottom border-success">
+              <tr>
+                <th>Select</th>
+                <th>Loan ID</th>
+                <th>Loan Amount</th>
+                <th>Total Amount(Partial Paid)</th>
+                <th>Interest (%)</th>
+                <th>Paid</th>
+                <th>Pending</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
+                <th class="text-center">Show</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% pendingLoans.forEach(loan => { %>
+              <tr class="border-bottom">
+                <td>
+                  <input
+                    type="checkbox"
+                    class="loan-check"
+                    name="loanIds"
+                    value="<%= loan._id %>"
+                    data-pending="<%= loan.pendingAmount || loan.loanAmount %>"
+                  />
+                </td>
+
+                <td>
+                  <span
+                    class="badge bg-success-subtle text-success px-3 py-2 rounded-pill"
+                  >
+                    <%= loan.loanId %>
+                  </span>
+                </td>
+
+                <td>₹<%= loan.loanAmount %></td>
+                <td>₹<%= loan.pendingAmount + loan.paidAmount %></td>
+                <td><%= loan.interest %>%</td>
+                <td>₹<%= loan.paidAmount %></td>
+                <td class="fw-semibold">
+                  ₹<%= loan.pendingAmount || loan.loanAmount %>
+                </td>
+
+                <td>
+                  <% if(loan.status === "PARTIAL-FINISHED") { %>
+                  <span class="badge bg-warning text-dark">Partial</span>
+                  <% } else { %>
+                  <span class="badge bg-danger">Ongoing</span>
+                  <% } %>
+                </td>
+
+                <td class="text-center">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-success"
+                    onclick="toggleCalc('<%= loan._id %>')"
+                  >
+                    Calculate
+                  </button>
+                </td>
+                <td class="text-center">
+                  <a
+                    href="/loan/<%= loan.loanId %>/ldetail"
+                    class="btn btn-sm btn-outline-success"
+                  >
+                    Show
+                  </a>
+                </td>
+              </tr>
+
+              <tr id="calc-<%= loan._id %>" class="d-none bg-light">
+                <td colspan="8">
+                  <div class="p-3">
+                    <strong>Calculated Till Today</strong><br />
+                    <%const fromDate = loan.updatedAt ? loan.updatedAt :
+                    loan.createdAt; const days = Math.ceil( (Date.now() - new
+                    Date(fromDate).getTime()) / (1000 * 60 * 60 * 24) ); const
+                    base = loan.pendingAmount > 0 ? loan.pendingAmount :
+                    loan.loanAmount; const interestAmount = (base *
+                    loan.interest * days) / 36500; const total = Math.round(base
+                    + interestAmount); %>Time Period:
+                    <strong><%= days %></strong> Days<br />
+                    Loan Amount: <strong>₹<%= base %></strong><br />
+                    Interest Amount:
+                    <strong>₹<%= Math.round(interestAmount) %></strong><br />
+                    Total Payable: <strong>₹<%= total %></strong>
+                  </div>
+                </td>
+              </tr>
+
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <!-- ======== SELECTED LOAN SUMMARY ========= -->
+        <div class="card shadow-sm mb-4 d-none" id="selectedLoanSummary">
+          <div class="card-body text-center">
+            <h5 class="fw-bold mb-3">Selected Loan Summary</h5>
+
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Selected Pending</h6>
+                <h5 class="text-danger" id="selLoan">₹ 0</h5>
+              </div>
+
+              <div class="col-md-6">
+                <h6>Status</h6>
+                <h5 id="selLoanStatus" class="fw-bold text-secondary">—</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <button class="btn btn-success w-100 py-2">Proceed to Payment</button>
+        </div>
+      </form>
+      <% } %>
+    </div>
+  </div>
+
+  <hr class="my-30" />
+
+  <!-- ================= SETTLED LOANS ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white fw-semibold">
+      Settled Loans
+    </div>
+
+    <div class="card-body">
+      <% if (settledLoans.length === 0) { %>
+      <div class="alert alert-success text-center mb-0">
+        No loans settled yet
+      </div>
+      <% } else { %>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="text-success border-bottom border-success">
+            <tr>
+              <th>Loan ID</th>
+              <th>Loan Amount</th>
+              <th>Interest (%)</th>
+              <th>Time Period(Days)</th>
+              <th>Paid</th>
+              <th>Status</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% settledLoans.forEach(loan => { %>
+            <tr class="border-bottom">
+              <td>
+                <span class="badge bg-success px-3 py-2 rounded-pill">
+                  <%= loan.loanId %>
+                </span>
+              </td>
+
+              <td>₹<%= loan.loanAmount %></td>
+              <td><%= loan.interest %>%</td>
+              <td><%= loan.periodIndays %></td>
+              <td class="fw-semibold">₹<%= loan.paidAmount %></td>
+
+              <td>
+                <span class="badge bg-success-subtle text-success">
+                  Finished
+                </span>
+              </td>
+
+              <td class="text-center">
+                <a
+                  href="/loan/<%= loan.loanId %>/ldetail"
+                  class="btn btn-sm btn-outline-success"
+                >
+                  Show
+                </a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <hr class="my-30" />
+      <!-- ===== SETTLED LOANS SUMMARY  ===== -->
+      <% if (settledLoans.length > 0) { %>
+      <div class="row text-center mb-3">
+        <div class="col-md-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h6>Total Loan Amount</h6>
+              <h4 class="text-primary">
+                ₹ <%= settledLoanSummary.totalLoanAmount %>
+              </h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h6>Total Interest</h6>
+              <h4 class="text-warning">
+                ₹ <%= settledLoanSummary.totalInterest %>
+              </h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h6>Total Amount</h6>
+              <h4 class="text-success">
+                ₹ <%= settledLoanSummary.totalAmount %>
+              </h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h6>Total Paid</h6>
+              <h4 class="text-success fw-bold">
+                ₹ <%= settledLoanSummary.totalPaid %>
+              </h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% } %> <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleCalc(id) {
+    document.getElementById("calc-" + id)?.classList.toggle("d-none");
+  }
+
+  function recalcLoans() {
+    let total = 0;
+    let count = 0;
+
+    document.querySelectorAll(".loan-check").forEach((el) => {
+      if (el.checked) {
+        total += Number(el.dataset.pending || 0);
+        count++;
+      }
+    });
+
+    const card = document.getElementById("selectedLoanSummary");
+    const amountEl = document.getElementById("selLoan");
+    const statusEl = document.getElementById("selLoanStatus");
+
+    if (count === 0) {
+      card.classList.add("d-none");
+      return;
+    }
+
+    card.classList.remove("d-none");
+    amountEl.innerText = "₹ " + total;
+
+    if (total > 0) {
+      statusEl.innerText = "Pending Payment ₹ " + total;
+      statusEl.className = "fw-bold text-danger";
+    } else {
+      statusEl.innerText = "Fully Settled";
+      statusEl.className = "fw-bold text-success";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document
+      .querySelectorAll(".loan-check")
+      .forEach((el) => el.addEventListener("change", recalcLoans));
+  });
+</script>

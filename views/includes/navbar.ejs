@@ -1,0 +1,625 @@
+<style>
+  .modern-navbar {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    padding: 0.5rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+
+  .modern-navbar.scrolled {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .modern-navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #1b4332;
+    text-decoration: none;
+    font-family: "Playfair Display", serif;
+    transition: all 0.3s ease;
+  }
+
+  .modern-navbar-brand:hover {
+    color: #2d6a4f;
+    transform: scale(1.02);
+  }
+
+  .modern-navbar-brand i {
+    color: #f77f00;
+    font-size: 1.8rem;
+  }
+
+  .modern-nav-link {
+    color: #212529;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+    font-size: 0.95rem;
+  }
+
+  .modern-nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    width: 0;
+    height: 2px;
+    background: #f77f00;
+    transition: width 0.3s ease;
+  }
+
+  .modern-nav-link:hover {
+    color: #2d6a4f;
+  }
+
+  .modern-nav-link:hover::after {
+    width: calc(100% - 2rem);
+  }
+
+  .modern-dropdown-toggle {
+    color: #212529;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+
+  .modern-dropdown-toggle:hover {
+    color: #2d6a4f;
+  }
+
+  .modern-dropdown-menu {
+    background: white;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    min-width: 220px;
+  }
+
+  .modern-dropdown-item {
+    color: #212529;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .modern-dropdown-item:hover {
+    background: linear-gradient(135deg, #f8f4e8 0%, #fffcf2 100%);
+    color: #2d6a4f;
+    transform: translateX(5px);
+  }
+
+  .modern-dropdown-item i {
+    color: #f77f00;
+    width: 20px;
+  }
+
+  .modern-btn-auth {
+    background: linear-gradient(135deg, #f77f00 0%, #fcbf49 100%);
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(247, 127, 0, 0.3);
+    border: none;
+    display: inline-block;
+    font-size: 0.9rem;
+  }
+
+  .modern-btn-auth:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(247, 127, 0, 0.4);
+    color: white;
+  }
+
+  .modern-btn-secondary {
+    background: white;
+    color: #2d6a4f;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid #2d6a4f;
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .modern-btn-secondary:hover {
+    background: #2d6a4f;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(45, 106, 79, 0.3);
+  }
+
+  .modern-user-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: 3px solid white;
+    box-shadow: 0 4px 15px rgba(45, 106, 79, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .modern-user-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(45, 106, 79, 0.4);
+  }
+
+  .modern-user-dropdown {
+    background: white;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 0;
+    margin-top: 0.8rem;
+    min-width: 260px;
+    overflow: hidden;
+  }
+
+  .modern-user-header {
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #f8f4e8 0%, #fffcf2 100%);
+    border-bottom: 2px solid #f77f00;
+  }
+
+  .modern-user-header p {
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+    color: #8b7355;
+    font-weight: 500;
+  }
+
+  .modern-user-header h6 {
+    margin-bottom: 0;
+    font-weight: 700;
+    color: #1b4332;
+    font-size: 1.1rem;
+  }
+
+  .modern-user-menu-item {
+    color: #212529;
+    padding: 0.9rem 1.2rem;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-decoration: none;
+  }
+
+  .modern-user-menu-item:hover {
+    background: linear-gradient(135deg, #f8f4e8 0%, #fffcf2 100%);
+    color: #2d6a4f;
+  }
+
+  .modern-user-menu-item.logout {
+    color: #dc3545;
+    border-top: 1px solid #e9ecef;
+  }
+
+  .modern-user-menu-item.logout:hover {
+    background: #fff5f5;
+  }
+
+  .modern-user-menu-item i {
+    width: 24px;
+    font-size: 1.1rem;
+  }
+
+  .modern-dealer-strip {
+    background: linear-gradient(90deg, #2d6a4f 0%, #1b4332 100%);
+    color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 2px solid #f77f00;
+    position: relative;
+  }
+
+  .modern-dealer-strip::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(247, 127, 0, 0.1) 0%,
+      transparent 50%,
+      rgba(247, 127, 0, 0.1) 100%
+    );
+    pointer-events: none;
+  }
+
+  .modern-dealer-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 100px;
+    padding: 10px 0;
+    animation: modern-marquee 25s linear infinite;
+  }
+
+  .modern-dealer-track span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .modern-dealer-track i {
+    color: #fcbf49;
+    font-size: 1rem;
+  }
+
+  .modern-dealer-track b {
+    color: #fcbf49;
+    margin-right: 5px;
+  }
+
+  @keyframes modern-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .modern-navbar-toggler {
+    border: none;
+    background: transparent;
+    padding: 0.5rem;
+  }
+
+  .modern-navbar-toggler:focus {
+    box-shadow: none;
+  }
+
+  .modern-navbar-toggler-icon {
+    width: 28px;
+    height: 2px;
+    background: #1b4332;
+    display: block;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .modern-navbar-toggler-icon::before,
+  .modern-navbar-toggler-icon::after {
+    content: "";
+    width: 28px;
+    height: 2px;
+    background: #1b4332;
+    position: absolute;
+    left: 0;
+    transition: all 0.3s ease;
+  }
+
+  .modern-navbar-toggler-icon::before {
+    top: -8px;
+  }
+
+  .modern-navbar-toggler-icon::after {
+    top: 8px;
+  }
+
+  @media (max-width: 991px) {
+    .modern-navbar .navbar-collapse {
+      background: white;
+      border-radius: 12px;
+      margin-top: 1rem;
+      padding: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-nav-link::after {
+      display: none;
+    }
+
+    .modern-dropdown-menu {
+      box-shadow: none;
+      border: 1px solid #e9ecef;
+      margin-left: 1rem;
+    }
+  }
+  .nav-item.dropdown .nav-links::after {
+    display: none !important;
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg modern-navbar" id="modernNavbar">
+  <div class="container-fluid px-4">
+    <% if(!currUser){ %>
+    <a class="modern-navbar-brand" href="/">
+      <i class="fa-solid fa-seedling"></i>
+      <span>ANAJ MANDI</span>
+    </a>
+    <% } else { %>
+    <a class="modern-navbar-brand" href="/dashboard">
+      <i class="fa-solid fa-seedling"></i>
+      <span>ANAJ MANDI</span>
+    </a>
+    <% } %>
+
+    <button
+      class="navbar-toggler modern-navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNavbar"
+    >
+      <span class="modern-navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <% if(currUser){ %>
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle modern-dropdown-toggle"
+            href="#"
+            data-bs-toggle="dropdown"
+          >
+            <i class="fa-solid fa-user-tie me-1"></i> Farmer
+          </a>
+          <ul class="dropdown-menu modern-dropdown-menu">
+            <li>
+              <a class="dropdown-item modern-dropdown-item" href="/farmer">
+                <i class="fa-solid fa-table-columns"></i>
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item modern-dropdown-item" href="/farmer/new">
+                <i class="fa-solid fa-user-plus"></i>
+                New Farmer
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item modern-dropdown-item"
+                href="/farmer/settled"
+              >
+                <i class="fa-solid fa-circle-check"></i>
+                Payment Settled
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item modern-dropdown-item"
+                href="/farmer/pending"
+              >
+                <i class="fa-solid fa-clock"></i>
+                Payment Pending
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle modern-dropdown-toggle"
+            href="#"
+            data-bs-toggle="dropdown"
+          >
+            <i class="fa-solid fa-users me-1"></i> Buyer
+          </a>
+          <ul class="dropdown-menu modern-dropdown-menu">
+            <li>
+              <a class="dropdown-item modern-dropdown-item" href="/buyer">
+                <i class="fa-solid fa-table-columns"></i>
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item modern-dropdown-item" href="/buyer/new">
+                <i class="fa-solid fa-user-plus"></i>
+                New Buyer
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item modern-dropdown-item"
+                href="/buyer/settled"
+              >
+                <i class="fa-solid fa-circle-check"></i>
+                Payment Settled
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item modern-dropdown-item"
+                href="/buyer/pending"
+              >
+                <i class="fa-solid fa-clock"></i>
+                Payment Pending
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle modern-dropdown-toggle"
+            href="#"
+            data-bs-toggle="dropdown"
+          >
+            <i class="fa-solid fa-hand-holding-dollar me-1"></i> Loan
+          </a>
+          <ul class="dropdown-menu modern-dropdown-menu">
+            <li>
+              <a class="dropdown-item modern-dropdown-item" href="/loan">
+                <i class="fa-solid fa-table-columns"></i>
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item modern-dropdown-item"
+                href="/loan/summary"
+              >
+                <i class="fa-solid fa-chart-pie"></i>
+                Summary
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item modern-dropdown-item"
+                href="/loan/settled"
+              >
+                <i class="fa-solid fa-circle-check"></i>
+                Loan Settled
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item modern-dropdown-item"
+                href="/loan/pending"
+              >
+                <i class="fa-solid fa-clock"></i>
+                Loan Pending
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link modern-nav-link" href="/inventory">
+            <i class="fa-solid fa-boxes-stacked me-1"></i> Inventory
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link modern-nav-link" href="/report">
+            <i class="fa-solid fa-file-invoice me-1"></i> Reports
+          </a>
+        </li>
+      </ul>
+      <% } %>
+
+      <ul class="navbar-nav ms-auto align-items-center">
+        <% if(!currUser){ %>
+        <li class="nav-item">
+          <a class="modern-btn-secondary" href="/signup">
+            <i class="fa-solid fa-user-plus me-1"></i> Create Account
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="modern-btn-secondary" href="/login">
+            <i class="fa-solid fa-right-to-bracket me-1"></i> Login
+          </a>
+        </li>
+        <% } else { %>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-links dropdown-toggle p-0"
+            href="#"
+            data-bs-toggle="dropdown"
+            style="border: none; background: none"
+          >
+            <div class="modern-user-avatar">
+              <%= currUser.name.charAt(0).toUpperCase() %>
+            </div>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end modern-user-dropdown">
+            <li class="modern-user-header">
+              <p>Dealer Account</p>
+              <h6><%= currUser.name %></h6>
+            </li>
+            <li>
+              <a class="modern-user-menu-item" href="/dealer/profile">
+                <i class="fa-solid fa-id-card"></i>
+                My Profile
+              </a>
+            </li>
+            <li>
+              <a class="modern-user-menu-item logout" href="/logout">
+                <i class="fa-solid fa-power-off"></i>
+                Logout
+              </a>
+            </li>
+          </ul>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<% if (currUser) { %>
+<div class="modern-dealer-strip">
+  <div class="modern-dealer-track">
+    <span>
+      <i class="fa-solid fa-store"></i>
+      <b>FIRM:</b> <%= currUser.firmName %>
+      <span style="margin: 0 1rem">•</span>
+      <i class="fa-solid fa-location-dot"></i>
+      <b>SHOP NO:</b> <%= currUser.shopNo %>
+      <span style="margin: 0 1rem">•</span>
+      <i class="fa-solid fa-address-card"></i>
+      <b>GSTIN:</b> <%= currUser.gstNo %>
+      <span style="margin: 0 1rem">•</span>
+      <i class="fa-solid fa-circle-check"></i>
+      <b>VERIFIED DEALER</b>
+    </span>
+
+    <span>
+      <i class="fa-solid fa-store"></i>
+      <b>FIRM:</b> <%= currUser.firmName %>
+      <span style="margin: 0 1rem">•</span>
+      <i class="fa-solid fa-location-dot"></i>
+      <b>SHOP NO:</b> <%= currUser.shopNo %>
+      <span style="margin: 0 1rem">•</span>
+      <i class="fa-solid fa-address-card"></i>
+      <b>GSTIN:</b> <%= currUser.gstNo %>
+      <span style="margin: 0 1rem">•</span>
+      <i class="fa-solid fa-circle-check"></i>
+      <b>VERIFIED DEALER</b>
+    </span>
+  </div>
+</div>
+<% } %>
+
+<script>
+  window.addEventListener("scroll", function () {
+    const navbar = document.getElementById("modernNavbar");
+    if (window.scrollY > 50) {
+      navbar.classList.add("scrolled");
+    } else {
+      navbar.classList.remove("scrolled");
+    }
+  });
+</script>

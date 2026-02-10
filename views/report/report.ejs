@@ -1,0 +1,356 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container-fluid px-lg-5 mt-4">
+  <!-- ===== HEADER ===== -->
+  <div class="card shadow-sm mb-4 border-0">
+    <div class="card-body bg-success-subtle text-center rounded">
+      <h4 class="fw-bold text-success mb-1">
+        <i class="fa-solid fa-chart-line me-2"></i> Profit Dashboard
+      </h4>
+      <p class="text-muted mb-0">Loan • Crop • Total Profit Overview</p>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-2 border-0">
+    <div class="card-header bg-success text-white fw-bold">
+      <h5 class="mb-0">Profit Dashboard</h5>
+    </div>
+
+    <div class="card-body">
+      <form method="GET" class="mb-4">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label text-muted">From Date</label>
+            <input
+              type="date"
+              name="from"
+              value="<%= from || '' %>"
+              class="form-control"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label text-muted">To Date</label>
+            <input
+              type="date"
+              name="to"
+              value="<%= to || '' %>"
+              class="form-control"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <button class="btn btn-success w-100">
+              <i class="fa-solid fa-filter me-1"></i> Apply Filter
+            </button>
+          </div>
+        </div>
+      </form>
+      <hr />
+      <!-- PROFIT CARDS -->
+      <div class="row g-4">
+        <!-- Loan Profit -->
+        <div class="col-md-4">
+          <a href="/loan/summary" class="text-decoration-none">
+            <div
+              class="card h-100 border-0 border-top border-4 border-warning shadow-sm"
+            >
+              <div class="card-body text-center">
+                <h6 class="fw-bold text-warning mb-1">Loan Profit</h6>
+                <h3 class="fw-bold mb-2">₹ <%= loanProfit %></h3>
+                <span class="badge bg-warning-subtle text-warning">
+                  Interest Earnings
+                </span>
+                <div class="text-center mt-2">
+                  <a
+                    href="/loan/summary"
+                    class="btn btn-sm btn-outline-success shadow-sm"
+                  >
+                    Show Detail →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Crop Profit -->
+        <div class="col-md-4">
+          <a href="/inventory" class="text-decoration-none">
+            <div
+              class="card h-100 border-0 border-top border-4 border-success shadow-sm"
+            >
+              <div class="card-body text-center">
+                <h6 class="fw-bold text-success mb-1">Crop Profit</h6>
+                <h3 class="fw-bold mb-2">₹ <%= Math.round(cropProfit) %></h3>
+                <span class="badge bg-success-subtle text-success">
+                  Trading Margin
+                </span>
+                <div class="text-center mt-2">
+                  <a
+                    href="/inventory"
+                    class="btn btn-sm btn-outline-success shadow-sm"
+                  >
+                    Show Detail →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Total Profit -->
+        <div class="col-md-4">
+          <div
+            class="card h-100 border-0 border-top border-4 border-primary shadow-sm"
+          >
+            <div class="card-body text-center">
+              <h6 class="fw-bold text-primary mb-1">Total Profit</h6>
+              <h3 class="fw-bold mb-2">₹ <%= Math.round(totalProfit) %></h3>
+              <span class="badge bg-primary-subtle text-primary">
+                Loan + Crop
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm my-5 border-0 mb-4 mt-4">
+    <div class="card-header bg-success text-white fw-bold">
+      <h5 class="mb-0">Financial Overview</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="p-3 bg-white rounded border shadow-sm h-100">
+            <div class="text-muted small fw-bold mb-2">
+              <i class="fa-solid fa-tractor me-2 text-danger"></i>
+              FARMER PAYABLES
+            </div>
+
+            <div class="d-flex justify-content-between mb-1">
+              <span>Purchase</span>
+              <span class="fw-bold">₹ <%= totals.totalBuy.toFixed(0) %></span>
+            </div>
+
+            <div class="d-flex justify-content-between text-success fs-7">
+              <span>Paid</span>
+              <span>₹ <%= totals.givePaid.toFixed(0) %></span>
+            </div>
+
+            <hr class="my-2" />
+
+            <div
+              class="d-flex justify-content-between text-danger fw-bold fs-6"
+            >
+              <span>Pending</span>
+              <span>₹ <%= totals.givePending.toFixed(0) %></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BUYER RECEIVABLES -->
+        <div class="col-md-4">
+          <div class="p-3 bg-white rounded border shadow-sm h-100">
+            <div class="text-muted small fw-bold mb-2">
+              <i class="fa-solid fa-cart-shopping me-2 text-success"></i>
+              BUYER RECEIVABLES
+            </div>
+
+            <div class="d-flex justify-content-between mb-1">
+              <span>Sales</span>
+              <span class="fw-bold">₹ <%= totals.totalSell.toFixed(0) %></span>
+            </div>
+
+            <div class="d-flex justify-content-between text-success fs-7">
+              <span>Received</span>
+              <span>₹ <%= totals.receivePaid.toFixed(0) %></span>
+            </div>
+
+            <hr class="my-2" />
+
+            <div
+              class="d-flex justify-content-between text-success fw-bold fs-6"
+            >
+              <span>Pending</span>
+              <span>₹ <%= totals.receivePending.toFixed(0) %></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOAN ASSETS -->
+        <div class="col-md-4">
+          <div class="p-3 bg-white rounded border shadow-sm h-100">
+            <div class="text-muted small fw-bold mb-2">
+              <i class="fa-solid fa-hand-holding-dollar me-2 text-warning"></i>
+              LOAN ASSETS
+            </div>
+
+            <div class="d-flex justify-content-between mb-1">
+              <span>Principal</span>
+              <span class="fw-bold"
+                >₹ <%= loan.totalLoanGiven.toFixed(0) %></span
+              >
+            </div>
+
+            <div class="d-flex justify-content-between text-warning fs-7">
+              <span>Interest</span>
+              <span>+₹ <%= loan.totalInterestAccrued.toFixed(0) %></span>
+            </div>
+
+            <hr class="my-2" />
+
+            <div class="d-flex justify-content-between text-dark fw-bold fs-6">
+              <span>Pending</span>
+              <span>₹ <%= loan.totalPendingAmount.toFixed(0) %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card shadow-sm mb-5 border-0">
+    <div class="card-header bg-success text-white fw-bold">
+      <h5 class="mb-0">Overall Payment Position</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-4 mb-3">
+        <!-- HAVE TO PAY -->
+        <div class="col-md-6 mb-4">
+          <div class="p-3 bg-white rounded border shadow-sm h-100">
+            <div class="text-muted small fw-bold mb-2">
+              <i class="fa-solid fa-arrow-up text-danger me-2"></i>
+              AMOUNT YOU HAVE TO PAY
+            </div>
+
+            <div class="d-flex justify-content-between mb-1">
+              <span>Total Purchase</span>
+              <span class="fw-bold">₹ <%= totals.totalBuy.toFixed(2) %></span>
+            </div>
+
+            <div class="d-flex justify-content-between text-success fs-6">
+              <span>Already Paid</span>
+              <span>₹ <%= totals.givePaid.toFixed(2) %></span>
+            </div>
+
+            <hr class="my-2" />
+
+            <div
+              class="d-flex justify-content-between text-danger fw-bold fs-5"
+            >
+              <span>Pending To Pay</span>
+              <span>₹ <%= totals.givePending.toFixed(2) %></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- WILL RECEIVE -->
+        <div class="col-md-6 mb-4">
+          <div class="p-3 bg-white rounded border shadow-sm h-100">
+            <div class="text-muted small fw-bold mb-2">
+              <i class="fa-solid fa-arrow-down text-success me-2"></i>
+              AMOUNT YOU WILL RECEIVE
+            </div>
+
+            <!-- PENDING -->
+            <div class="d-flex justify-content-between mb-1">
+              <span>From Buyers</span>
+              <span class="fw-bold"
+                >₹ <%= totals.receivePending.toFixed(2) %></span
+              >
+            </div>
+
+            <div class="d-flex justify-content-between fs-6 text-warning">
+              <span>From Loans</span>
+              <span>₹ <%= loan.totalPendingAmount.toFixed(2) %></span>
+            </div>
+
+            <div
+              class="d-flex justify-content-between fw-bold text-success mt-1 fs-5"
+            >
+              <span>Total Pending</span>
+              <span>
+                ₹ <%= (totals.receivePending +
+                loan.totalPendingAmount).toFixed(2) %>
+              </span>
+            </div>
+
+            <hr class="my-2" />
+
+            <!-- RECEIVED -->
+            <div class="d-flex justify-content-between mb-1">
+              <span>Buyer Received</span>
+              <span class="fw-bold"
+                >₹ <%= totals.receivePaid.toFixed(2) %></span
+              >
+            </div>
+
+            <div class="d-flex justify-content-between small text-primary fs-6">
+              <span>Loan Paid Back</span>
+              <span>₹ <%= loan.totalPaidAmount.toFixed(2) %></span>
+            </div>
+
+            <div
+              class="d-flex justify-content-between fw-bold text-primary mt-1 fs-5"
+            >
+              <span>Total Received</span>
+              <span>
+                ₹ <%= (totals.receivePaid + loan.totalPaidAmount).toFixed(2) %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row text-center mb-2">
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h6 class="text-muted">Paid To Farmers</h6>
+                <h4 class="text-danger">₹ <%= totals.givePaid.toFixed(2) %></h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h6 class="text-muted">Pending To Farmers</h6>
+                <h4 class="text-danger">
+                  ₹ <%= totals.givePending.toFixed(2) %>
+                </h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h6 class="text-muted">Total Received</h6>
+                <h4 class="text-success">
+                  ₹ <%= (totals.receivePaid + loan.totalPaidAmount).toFixed(2)
+                  %>
+                </h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h6 class="text-muted">Pending To Receive</h6>
+                <h4 class="text-success">
+                  ₹ <%= (totals.receivePending +
+                  loan.totalPendingAmount).toFixed(2) %>
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

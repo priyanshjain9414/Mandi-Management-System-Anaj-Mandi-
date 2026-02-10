@@ -1,0 +1,174 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #d8f3dc, #f1faee);
+  }
+
+  .register-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .wide-container {
+    max-width: 1000px;
+  }
+
+  .input-group-text {
+    background: #e9f5ec;
+    border: none;
+    color: #2d6a4f;
+  }
+
+  .form-control,
+  textarea {
+    border-left: none;
+    padding: 12px;
+  }
+
+  .form-control:focus,
+  textarea:focus {
+    box-shadow: none;
+    border-color: #52b788;
+  }
+
+  .register-title {
+    font-weight: 600;
+    color: #1b4332;
+  }
+</style>
+
+<div class="row mt-5">
+  <div class="col-12 mx-auto wide-container">
+    <div class="register-card">
+      <h3 class="text-center mb-4 register-title">
+        <i class="fa-solid fa-user-plus me-2"></i> Buyer Registration
+      </h3>
+
+      <form action="/buyer/new" method="post" novalidate>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-user"></i
+              ></span>
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Buyer Name"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-phone"></i
+              ></span>
+              <input
+                type="tel"
+                name="mobile"
+                class="form-control"
+                placeholder="Mobile Number"
+                pattern="[0-9]{10}"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-8 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-location-dot"></i
+              ></span>
+              <textarea
+                name="address"
+                class="form-control"
+                rows="2"
+                placeholder="Full Address"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-map-pin"></i
+              ></span>
+              <input
+                type="number"
+                name="zip"
+                class="form-control"
+                placeholder="ZIP Code"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-city"></i
+              ></span>
+              <input
+                type="text"
+                name="city"
+                class="form-control"
+                placeholder="City"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-flag"></i
+              ></span>
+              <input
+                type="text"
+                name="state"
+                class="form-control"
+                placeholder="State"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-4">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-calendar"></i
+              ></span>
+              <input
+                type="number"
+                name="year"
+                class="form-control"
+                placeholder="Registration Year"
+                min="2000"
+                max="2100"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" name="dealerId" value="<%= currUser._id %>" />
+
+        <button class="btn btn-success w-100">
+          <i class="fa-solid fa-floppy-disk me-1"></i> Register Buyer
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,122 @@
+<% layout("layouts/receipt") %> <%- include("../includes/receipt-header") %>
+
+<h3 style="text-align: center; margin: 20px 0; color: #14532d">
+  Crop Sale Receipt
+</h3>
+
+<!-- ================= PARTY DETAILS  ================= -->
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 120px">Party Type</th>
+    <td><%= crop.personType %></td>
+
+    <th style="width: 120px">Party Name</th>
+    <td><%= crop.personName %></td>
+
+    <th style="width: 120px">Party ID</th>
+    <td><%= crop.personBusinessId %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= CROP DETAILS  ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Crop Details</h4>
+
+<table>
+  <tbody>
+    <tr>
+      <th>Crop</th>
+      <td><%= crop.cropType %> (Grade <%= crop.grade %>)</td>
+
+      <th>Crop ID</th>
+      <td><%= crop.cropId %></td>
+    </tr>
+
+    <tr>
+      <th>No. of Gunny</th>
+      <td><%= crop.noOfGunny || "—" %></td>
+
+      <th>Gunny Capacity</th>
+      <td><%= crop.gunnyQuantity || "—" %> KG</td>
+    </tr>
+
+    <tr>
+      <th>Total Quantity</th>
+      <td><%= crop.quantity %> Quintal</td>
+
+      <th>Rate / Quintal</th>
+      <td>₹ <%= crop.pricePerQuintal %></td>
+    </tr>
+
+    <tr>
+      <th>Total Amount</th>
+      <td><strong>₹ <%= crop.totalAmount %></strong></td>
+
+      <th>Status</th>
+      <td><strong><%= crop.paymentStatus %></strong></td>
+    </tr>
+
+    <tr>
+      <th>Crop Date</th>
+      <td colspan="3"><%= crop.date.toDateString() %></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ================= PAYMENT HISTORY  ================= -->
+<br />
+<% if (payments && payments.length > 0) { %>
+<hr />
+
+<h4 style="margin-bottom: 10px; color: #14532d">Payment History</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Mode</th>
+      <th class="right">Pending Before</th>
+      <th class="right">Paid</th>
+      <th class="right">Pending After</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% payments.forEach(p => { const tx = p.payments.find(x =>
+    x.cropId.toString() === crop._id.toString() ); if (!tx) return; %>
+    <tr>
+      <td><%= new Date(p.createdAt).toDateString() %></td>
+      <td><%=p.isReversal ? 'REVERSE' : p.mode %></td>
+      <td class="right">
+        ₹ <%= p.isReversal ? tx.pendingBefore - Math.abs(tx.paidAmount) :
+        tx.pendingBefore %>
+      </td>
+      <td class="right">₹ <%= tx.paidAmount %></td>
+      <td class="right">₹ <%= tx.pendingAfter %></td>
+      <td><%= tx.statusAfter %></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<br />
+<% } %>
+<!-- ================= CROP PAYMENT SUMMARY ================= -->
+<hr />
+<h4 style="margin: 18px 0 8px; color: #14532d">Payment Summary</h4>
+
+<table style="width: 320px; margin-left: auto">
+  <tr>
+    <td>Total Amount</td>
+    <td style="text-align: right">₹ <%= crop.totalAmount %></td>
+  </tr>
+  <tr>
+    <td>Paid Amount</td>
+    <td style="text-align: right">₹ <%= crop.paidAmount %></td>
+  </tr>
+  <tr>
+    <th>Pending Amount</th>
+    <th style="text-align: right">₹ <%= crop.pendingAmount %></th>
+  </tr>
+</table>
+<%- include("../includes/signature") %>

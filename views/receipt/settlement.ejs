@@ -1,0 +1,189 @@
+<% layout("layouts/receipt") %> <%- include("../includes/receipt-header") %>
+
+<h3 class="receipt-hh <%= st.isReversal ? 'text-reversal' : 'text-original' %>">
+  <%= st.isReversal ? 'Settlement Reversal Receipt' : 'Settlement Receipt' %>
+</h3>
+
+<!-- ================= PARTY DETAILS ================= -->
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 120px">Party Type</th>
+    <td>FARMER</td>
+
+    <th style="width: 120px">Party Name</th>
+    <td><%= st.farmerName %></td>
+
+    <th style="width: 120px">Party ID</th>
+    <td><%= st.farmerBusinessId %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= SETTLEMENT META ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Settlement Details</h4>
+
+<% if (st.isReversal) { %>
+<div
+  style="
+    margin: 4px 0 10px;
+    font-size: 14px;
+    color: #b91c1c;
+    border-left: 3px solid #b91c1c;
+    padding-left: 8px;
+  "
+>
+  <strong>Reversal of Settlement ID:</strong> <%= st.settlementId %>
+</div>
+<% } %>
+
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 140px">Settlement ID</th>
+    <td><%= receiptId %></td>
+
+    <th style="width: 140px">Date</th>
+    <td><%= new Date(st.date).toDateString() %></td>
+  </tr>
+
+  <tr>
+    <th style="width: 140px">Status</th>
+    <td><strong><%= st.status %></strong></td>
+
+    <th>Direction</th>
+    <td colspan="5">
+      <strong><%= st.settlementDirection %></strong>
+    </td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= CROP ADJUSTMENTS ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Crop Adjustments</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Crop</th>
+      <th>Crop ID</th>
+      <th class="right">Qty</th>
+      <th class="right">Rate</th>
+      <th class="right">Total</th>
+      <th class="right">Pending<br />Before</th>
+      <th class="right"><%= st.isReversal ? "Reverse" : "Adjusted" %></th>
+      <th class="right">Pending<br />After</th>
+      <th class="center">Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% st.cropPayments.forEach(p => { %>
+    <tr>
+      <td><%= p.cropType %></td>
+      <td><%= p.cropBusinessId %></td>
+      <td class="right"><%= p.quantity %></td>
+      <td class="right">₹ <%= p.pricePerQuintal %></td>
+      <td class="right">₹ <%= p.totalAmount %></td>
+      <td class="right">
+        ₹ <%= st.isReversal ? p.pendingBefore - Math.abs(p.paidAmount) :
+        p.pendingBefore %>
+      </td>
+      <td class="right">₹ <%= p.paidAmount %></td>
+      <td class="right">₹ <%= p.pendingAfter %></td>
+      <td class="center"><strong><%= p.statusAfter %></strong></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<br />
+
+<!-- ================= LOAN ADJUSTMENTS ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Loan Adjustments</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Loan ID</th>
+      <th class="right">Principal</th>
+      <th class="right">Principal<br />Pending</th>
+      <th class="center">Period<br />(Days)</th>
+      <th class="right">Interest</th>
+      <th class="right">Total<br />Before</th>
+      <th class="right"><%= st.isReversal ? 'Reversed' : 'Adjusted' %></th>
+      <th class="right">Pending<br />After</th>
+      <th class="center">Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% st.loanPayments.forEach(p => { %>
+    <tr>
+      <td><%= p.loanBusinessId %></td>
+      <td class="right">₹ <%= p.loanAmount %></td>
+      <td class="right">
+        ₹ <%= st.isReversal ? p.totalPayableBefore - Math.abs(p.paidAmount) :
+        p.principalPendingBefore %>
+      </td>
+
+      <td class="center"><%= st.isReversal ? '—' : p.periodIndays %></td>
+      <td class="right">₹ <%= p.interestAmount %></td>
+
+      <td class="right">
+        ₹ <%= st.isReversal ? p.principalPendingBefore-Math.abs(p.paidAmount) :
+        p.totalPayableBefore %>
+      </td>
+
+      <td class="right">₹ <%= p.paidAmount %></td>
+      <td class="right">₹ <%= p.pendingAmountAfter %></td>
+
+      <td class="center">
+        <strong><%= st.isReversal ? 'REVERSED' : p.loanStatusAfter %></strong>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<br />
+
+<!-- ================= SETTLEMENT SUMMARY ================= -->
+<hr />
+<h4 style="margin: 18px 0 8px; color: #14532d">Settlement Summary</h4>
+
+<table style="width: 420px; margin-left: auto">
+  <tr>
+    <td>Total Crop Pending</td>
+    <td class="right">₹ <%= st.totalCropAmount %></td>
+  </tr>
+
+  <tr>
+    <td>Total Loan Payable</td>
+    <td class="right">₹ <%= st.totalLoanAmount %></td>
+  </tr>
+
+  <tr>
+    <td>Net Amount</td>
+    <td class="right">₹ <%= Math.abs(st.netAmount) %></td>
+  </tr>
+
+  <tr>
+    <td><%= st.isReversal ? 'Amount Reversed' : 'Paid Amount' %></td>
+    <td class="right">₹ <%= Math.abs(st.paidAmount) %></td>
+  </tr>
+
+  <tr>
+    <th>Pending Amount</th>
+    <th class="right">₹ <%= st.pendingAmount %></th>
+  </tr>
+
+  <tr>
+    <td>Final Direction</td>
+    <td class="right">
+      <strong><%= st.settlementDirection %></strong>
+    </td>
+  </tr>
+</table>
+
+<%- include("../includes/signature") %>

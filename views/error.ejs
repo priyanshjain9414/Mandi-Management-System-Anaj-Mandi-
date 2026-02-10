@@ -1,0 +1,41 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-lg border-0">
+        <div class="card-body text-center p-5">
+          <h1 class="display-4 fw-bold text-danger"><%= status %></h1>
+
+          <h4 class="mb-3"><%= message %></h4>
+
+          <p class="text-muted">
+            Something went wrong while processing your request. Please try again
+            or go back.
+          </p>
+
+          <div class="d-flex justify-content-center gap-3 mt-4">
+            <a
+              href="javascript:history.back()"
+              class="btn btn-outline-secondary"
+            >
+              Go Back
+            </a>
+            <a href="/dashboard" class="btn btn-danger"> Home </a>
+          </div>
+
+          <% if (process.env.NODE_ENV === "development") { %>
+          <hr class="my-4" />
+          <div class="text-start">
+            <h6 class="text-danger">Debug Info</h6>
+            <pre class="bg-light p-3 rounded small">
+<%= err.stack %>
+              </pre
+            >
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

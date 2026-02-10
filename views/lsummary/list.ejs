@@ -1,0 +1,143 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container-fluid px-lg-5 mt-4">
+  <!-- HEADER -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle text-center rounded">
+      <h4 class="fw-bold text-success mb-1">
+        <i class="fa-solid fa-clock-rotate-left me-2"></i> Loan Timeline
+      </h4>
+      <p class="text-muted mb-0">All loans with payment & interest details</p>
+    </div>
+  </div>
+
+  <!-- FILTER FORM -->
+  <form
+    action="/loan/summary/list"
+    method="GET"
+    class="card shadow-sm mb-4 p-3"
+  >
+    <div class="card-body p-1 col-md-5 mx-auto mb-1">
+      <div class="btn-group w-100" role="group">
+        <input type="radio" class="btn-check" name="status" id="statusAll"
+        value="" <%= !status ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="statusAll"> All </label>
+
+        <input type="radio" class="btn-check" name="status" id="statusOngoing"
+        value="ONGOING" <%= status === "ONGOING" ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="statusOngoing">
+          Ongoing
+        </label>
+
+        <input type="radio" class="btn-check" name="status" id="statusPartial"
+        value="PARTIAL-FINISHED" <%= status === "PARTIAL-FINISHED" ? "checked" :
+        "" %> />
+        <label class="btn btn-outline-success" for="statusPartial">
+          Partial
+        </label>
+
+        <input type="radio" class="btn-check" name="status" id="statusFinished"
+        value="FINISHED" <%= status === "FINISHED" ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="statusFinished">
+          Finished
+        </label>
+      </div>
+    </div>
+
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <input
+          type="text"
+          name="search"
+          value="<%= search || '' %>"
+          class="form-control"
+          placeholder="Loan ID / Farmer ID / Name"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <input
+          type="date"
+          name="fromDate"
+          value="<%= fromDate || '' %>"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <input
+          type="date"
+          name="toDate"
+          value="<%= toDate || '' %>"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-success w-100 fw-bold">
+          <i class="fa-solid fa-filter me-1"></i> Filter
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- LOAN CARDS -->
+  <div class="row">
+    <% if (!loans || loans.length === 0) { %>
+    <p class="text-center text-muted">No loans found</p>
+    <% } %> <% loans.forEach(loan => { %>
+    <div class="col-md-6 mb-4">
+      <div
+        class="card pay-card loan-card h-100 border-0 border-top border-4 border-<%= loan.status === 'FINISHED' ? 'success' : loan.status === 'PARTIAL-FINISHED' ? 'warning' : 'danger' %>"
+      >
+        <div class="card-body">
+          <small class="text-muted">
+            <i class="fa-regular fa-clock me-1"></i>
+            <%= new Date(loan.createdAt).toLocaleString() %>
+          </small>
+
+          <hr class="my-2" />
+
+          <p class="mb-1"><strong>Loan ID:</strong> <%= loan.loanId %></p>
+
+          <p class="mb-1">
+            <strong>Farmer:</strong>
+            <%= loan.personName %> (<%= loan.farmerBusinessId %>)
+          </p>
+
+          <p class="mb-1">
+            <strong>Loan Amount:</strong> ₹ <%= loan.loanAmount %>
+          </p>
+
+          <p class="mb-1"><strong>Interest:</strong> <%= loan.interest %> %</p>
+
+          <% if(loan.paidAmount){ %>
+          <p class="mb-1">
+            <strong>Paid-Amount:</strong> <%= loan.paidAmount %>
+          </p>
+          <% } %> <% if(loan.pendingAmount){ %>
+          <p class="mb-1">
+            <strong>Pending-Amount:</strong> <%= loan.pendingAmount %>
+          </p>
+          <% } %>
+
+          <span
+            class="badge <%= loan.status === 'FINISHED' ? 'bg-success' : loan.status === 'PARTIAL-FINISHED' ? 'bg-warning text-dark' : 'bg-danger' %>"
+          >
+            <%= loan.status %>
+          </span>
+
+          <div class="mt-3 text-end">
+            <a
+              href="/loan/<%= loan.loanId %>/ldetail"
+              class="btn btn-outline-success btn-sm"
+            >
+              View Details →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>

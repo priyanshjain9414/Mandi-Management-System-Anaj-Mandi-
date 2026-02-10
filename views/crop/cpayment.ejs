@@ -1,0 +1,109 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4 mb-5">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle rounded text-center">
+      <h4 class="fw-bold text-success mb-1">
+        <i class="fa-solid fa-money-bill-wave me-2"></i> Crop Payment
+      </h4>
+      <p class="text-muted mb-0">Settle pending crop amounts</p>
+    </div>
+  </div>
+
+  <!-- PERSON INFO -->
+  <div class="alert alert-info shadow-sm">
+    <strong>Person Type:</strong> <%= personType %><br />
+    <strong>Name:</strong> <%= person.name %><br />
+    <strong>ID:</strong> <%= personType === "FARMER" ? person.farmerId :
+    person.buyerId %>
+  </div>
+
+  <form action="/crop/payment" method="POST">
+    <!-- Hidden Fields -->
+    <input type="hidden" name="personType" value="<%= personType %>" />
+    <input type="hidden" name="personId" value="<%= person._id %>" />
+    <input type="hidden" name="personName" value="<%= person.name %>" />
+    <input
+      type="hidden"
+      name="personBusinessId"
+      value="<%= personBusinessId %>"
+    />
+
+    <!-- CROPS TABLE -->
+    <div class="table-responsive shadow-sm">
+      <table class="table table-bordered align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Crop ID</th>
+            <th>Crop Type</th>
+            <th>Total Amount (₹)</th>
+            <th>Paid (₹)</th>
+            <th>Pending (₹)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% crops.forEach((crop, index) => { %>
+          <tr>
+            <td><%= crop.cropId %></td>
+            <td><%= crop.cropType %></td>
+            <td>₹<%= crop.totalAmount %></td>
+            <td>₹<%= crop.paidAmount %></td>
+            <td class="pending fw-bold text-danger">
+              ₹<%= crop.pendingAmount %>
+            </td>
+
+            <input
+              type="hidden"
+              name="payments[<%= index %>][cropId]"
+              value="<%= crop._id %>"
+            />
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TOTALS SECTION -->
+    <div class="row mt-4 g-3">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Payment Mode</label>
+        <select class="form-select bg-light" disabled>
+          <option value="DEBIT" selected>Debit</option>
+        </select>
+        <input type="hidden" name="mode" value="DEBIT" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Total Pending Amount (₹)</label>
+        <input
+          type="number"
+          id="totalCropAmount"
+          name="totalCropAmount"
+          class="form-control fw-bold"
+          readonly
+        />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Amount Paid (₹)</label>
+        <input type="number" name="amountPaid" class="form-control" required />
+      </div>
+    </div>
+
+    <button class="btn btn-success w-100 mt-4 fw-bold">
+      <i class="fa-solid fa-floppy-disk me-1"></i> Save Payment
+    </button>
+  </form>
+</div>
+
+<script>
+  const totalCropAmountInput = document.getElementById("totalCropAmount");
+  function calculateTotalPending() {
+    let totalPending = 0;
+    document.querySelectorAll(".pending").forEach((el) => {
+      totalPending += Number(el.innerText.replace("₹", "").trim());
+    });
+    totalCropAmountInput.value = totalPending;
+  }
+  calculateTotalPending();
+</script>

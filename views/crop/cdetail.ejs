@@ -1,0 +1,287 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <!-- ================= HEADER ================= -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-success">
+      <i class="fa-solid fa-wheat-awn me-2 text-success"></i>Crop Details
+      <span class="badge bg-success ms-2"><%= crop.cropId %></span>
+    </h3>
+
+    <div class="d-flex gap-2">
+      <% if (crop.paymentStatus === "NOT-DONE" && crop.paidAmount === 0) { %>
+      <form action="/crop/<%= crop.cropId %>?_method=DELETE" method="POST">
+        <button
+          class="btn btn-danger"
+          onclick="return confirm('Delete unpaid crop? Inventory will be reverted.')"
+        >
+          <i class="fa-solid fa-trash me-1"></i> Delete Crop
+        </button>
+      </form>
+      <% } %>
+      <a
+        href="/receipt/crop/<%= crop.cropId %>"
+        target="_blank"
+        class="btn btn-outline-secondary"
+      >
+        <i class="fa-solid fa-print me-1"></i> Print Receipt
+      </a>
+
+      <a href="javascript:history.back()" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back
+      </a>
+    </div>
+  </div>
+
+  <!-- ================= CROP INFO ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Crop Information</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <strong>Owner Name</strong>
+          <p class="mb-0"><%= crop.personName %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Owner ID</strong>
+          <p class="mb-0"><%= crop.personBusinessId %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Crop Type</strong>
+          <p class="mb-0"><%= crop.cropType %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Crop ID</strong>
+          <p class="mb-0"><%= crop.cropId %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Quantity (Quintal)</strong>
+          <p class="mb-0"><%= crop.quantity %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Rate / Quintal</strong>
+          <p class="mb-0">₹ <%= crop.pricePerQuintal %></p>
+        </div>
+        <div class="col-md-6">
+          <strong>No. of Gunny Bags</strong>
+          <p class="mb-0"><%= crop.noOfGunny?.toFixed(2) || 0 %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Gunny Bag Capacity</strong>
+          <p class="mb-0"><%= crop.gunnyQuantity || "—" %> KG</p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Status</strong><br />
+          <span
+            class="badge <%= crop.paymentStatus === 'DONE' ? 'bg-success' : 'bg-warning' %>"
+          >
+            <%= crop.paymentStatus %>
+          </span>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Sold Date</strong>
+          <p class="mb-0"><%= crop.date.toDateString() %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 mb-4">
+    <div class="card border-success shadow-sm">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Charges Breakdown</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-2 text-center">
+          <div class="col-md-4">
+            <div class="card border-success shadow-sm py-2">
+              <div class="card-body p-2">
+                <h6 class="text-muted mb-1">Labour</h6>
+                <h5 class="fw-bold text-success mb-0">
+                  ₹ <%= crop.labourCharges %>
+                </h5>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card border-success shadow-sm py-2">
+              <div class="card-body p-2">
+                <h6 class="text-muted mb-1">Transport</h6>
+                <h5 class="fw-bold text-success mb-0">
+                  ₹ <%= crop.transportCharges %>
+                </h5>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card border-success shadow-sm py-2">
+              <div class="card-body p-2">
+                <h6 class="text-muted mb-1">Other</h6>
+                <h5 class="fw-bold text-success mb-0">
+                  ₹ <%= crop.otherCharges %>
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="text-center">
+          <span class="badge bg-success fs-6 px-3 py-2">
+            Total Charges: ₹ <%= crop.labourCharges + crop.transportCharges +
+            crop.otherCharges %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ================= SUMMARY ================= -->
+  <div class="col-12 mb-4">
+    <div class="card border-success shadow-sm">
+      <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Payment Summary</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3 text-center">
+          <div class="col-md-4">
+            <div class="card border-success shadow-sm h-100">
+              <div class="card-body">
+                <h6 class="text-muted">Total Amount</h6>
+                <h4 class="fw-bold text-success">₹ <%= crop.totalAmount %></h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card border-primary shadow-sm h-100">
+              <div class="card-body">
+                <h6 class="text-muted">Paid Amount</h6>
+                <h4 class="fw-bold text-primary">₹ <%= crop.paidAmount %></h4>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card border-danger shadow-sm h-100">
+              <div class="card-body">
+                <h6 class="text-muted">Pending Amount</h6>
+                <h4 class="fw-bold text-danger">₹ <%= crop.pendingAmount %></h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+  <!-- ================= PAYMENT HISTORY ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+      <h5 class="mb-0">Payment History</h5>
+    </div>
+
+    <div class="card-body">
+      <% if (payments.length === 0) { %>
+      <div class="alert alert-success text-center">
+        No transactions for this crop yet
+      </div>
+      <% } else { %>
+
+      <div class="row">
+        <% payments.forEach(p => { const tx = p.payments.find(x =>
+        x.cropId.toString() === crop._id.toString() ); if (!tx) return; %>
+
+        <div class="col-md-6 mb-2">
+          <div class="card shadow-sm border-primary h-100">
+            <div class="card-body">
+              <h6 class="fw-bold mb-2"><%= p.createdAt.toDateString() %></h6>
+
+              <% if (p.isReversal) { %>
+              <strong>Mode:</strong>
+              <span class="badge bg-danger mb-1">REVERSAL</span>
+              <p class="mb-1">
+                <strong>Reverses PaymentId: </strong><%= p.reversedPaymentId%>
+              </p>
+              <% } else { %>
+              <strong>Mode:</strong>
+              <span class="badge bg-info text-dark mb-1"><%= p.mode %></span>
+              <p class="mb-1">
+                <strong>Payment Id: </strong><%= p.paymentId %>
+              </p>
+              <% } %>
+
+              <hr />
+
+              <p class="mb-1 mt-1">
+                <strong>Crop:</strong>
+                <%= crop.cropType %> (<%= crop.cropId %>)
+              </p>
+
+              <p class="mb-1">
+                <strong>Total Amount:</strong> ₹ <%= tx.totalAmount %>
+              </p>
+
+              <% if (p.isReversal) { %>
+              <p class="mb-1">
+                <strong>Pending Before:</strong> ₹ <%= tx.pendingBefore -
+                Math.abs(tx.paidAmount)%>
+              </p>
+              <% } else { %>
+              <p class="mb-1">
+                <strong>Pending Before:</strong> ₹ <%= tx.pendingBefore %>
+              </p>
+              <% } %>
+
+              <hr />
+
+              <% if (p.isReversal) { %>
+              <p class="fw-bold text-danger mb-1 mt-1">
+                Reversed Amount: ₹ <%= Math.abs(tx.paidAmount) %>
+              </p>
+              <% } else { %>
+              <p class="fw-bold text-success mb-1 mt-1">
+                Paid Amount: ₹ <%= tx.paidAmount %>
+              </p>
+              <% } %>
+
+              <p class="text-danger fw-bold mb-1">
+                Pending After: ₹ <%= tx.pendingAfter %>
+              </p>
+
+              <span
+                class="badge <%= p.isReversal ? 'bg-danger' : tx.statusAfter === 'DONE' ? 'bg-success' : 'bg-warning' %>"
+              >
+                <%= p.isReversal ? 'REVERSED' : tx.statusAfter %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <% }) %>
+      </div>
+
+      <% } %>
+    </div>
+  </div>
+  <hr />
+</div>

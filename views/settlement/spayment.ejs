@@ -1,0 +1,209 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4 mb-5">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle rounded text-center">
+      <h4 class="fw-bold text-success mb-1">
+        <i class="fa-solid fa-scale-balanced me-2 text-success"></i>
+        Settlement Payment
+      </h4>
+      <p class="text-muted mb-0">Settle Pending Amounts</p>
+    </div>
+  </div>
+
+  <div class="alert alert-info">
+    <strong>Person Type: </strong>FARMER<br />
+    <strong>Name:</strong> <%= farmer.name %><br />
+    <strong>Farmer ID:</strong> <%= farmer.farmerId %>
+  </div>
+
+  <form action="/settlement/payment" method="POST">
+    <input type="hidden" name="farmerId" value="<%= farmer._id %>" />
+    <input type="hidden" name="farmerName" value="<%= farmer.name %>" />
+    <input
+      type="hidden"
+      name="farmerBusinessId"
+      value="<%= farmer.farmerId %>"
+    />
+
+    <!-- ================= CROPS ================= -->
+    <% if (crops.length) { %>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-success text-white fw-bold">Crop Details</div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Crop ID</th>
+              <th>Crop Type</th>
+              <th>Total Amount (₹)</th>
+              <th>Paid (₹)</th>
+              <th>Pending (₹)</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% crops.forEach((c, i) => { %>
+            <tr>
+              <td><%= c.cropId %></td>
+              <td><%= c.cropType %></td>
+              <td>₹<%= c.totalAmount %></td>
+              <td>₹<%= c.paidAmount %></td>
+              <td class="crop-pending fw-bold text-danger">
+                ₹<%= c.pendingAmount %>
+              </td>
+
+              <input
+                type="hidden"
+                name="cropPayments[<%= i %>][cropId]"
+                value="<%= c._id %>"
+              />
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- ================= LOANS ================= -->
+    <% if (loans.length) { %>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-warning fw-bold text-white">Loan Details</div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+          <thead class="table-dark">
+            <tr>
+              <th>Loan ID</th>
+              <th>Loan Amount</th>
+              <th>Total (Partial Paid)</th>
+              <th>Loan Paid</th>
+              <th>Loan Pending</th>
+              <th>Time (Days)</th>
+              <th>Interest (%)</th>
+              <th>Interest Amount</th>
+              <th>Total Payable</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% loans.forEach((loan, index) => { const days = Math.ceil(
+            (Date.now() - new Date(loan.createdAt)) / (1000 * 60 * 60 * 24) );
+            const base = loan.pendingAmount > 0 ? loan.pendingAmount :
+            loan.loanAmount; const interestAmount = (base * loan.interest *
+            days) / 36500; const total = Math.round(base + interestAmount); %>
+
+            <tr>
+              <td><%= loan.loanId %></td>
+              <td>₹<%= loan.loanAmount %></td>
+              <td>₹<%= loan.pendingAmount + loan.paidAmount %></td>
+              <td>₹<%= loan.paidAmount %></td>
+              <td>
+                ₹<%= loan.pendingAmount > 0 ? loan.pendingAmount :
+                loan.loanAmount %>
+              </td>
+              <td><%= days %></td>
+              <td><%= loan.interest %></td>
+              <td>₹<%= Math.round(interestAmount) %></td>
+              <td class="fw-bold loan-total">₹<%= total %></td>
+
+              <input
+                type="hidden"
+                name="loanPayments[<%= index %>][loanId]"
+                value="<%= loan._id %>"
+              />
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- ================= TOTALS ================= -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body row g-3">
+        <div class="text-center">
+          <div
+            id="selNet"
+            class="fw-bold text-secondary"
+            style="font-size: 21px"
+          >
+            <i class="fa-solid fa-scale-balanced me-1"></i> Fully Settled
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="fw-semibold"> Total Crop Pending</label>
+          <input
+            type="number"
+            id="totalCropAmount"
+            name="totalCropAmount"
+            class="form-control"
+            readonly
+          />
+        </div>
+
+        <div class="col-md-4">
+          <label class="fw-semibold"> Total Loan Payable</label>
+          <input
+            type="number"
+            id="totalLoanAmount"
+            name="totalLoanAmount"
+            class="form-control"
+            readonly
+          />
+        </div>
+
+        <div class="col-md-4">
+          <label class="fw-semibold"> Amount Paid Now</label>
+          <input
+            type="number"
+            name="paidAmount"
+            class="form-control"
+            required
+          />
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-success w-100 fw-bold">
+      <i class="fa-solid fa-circle-check me-1"></i> Confirm Settlement
+    </button>
+  </form>
+</div>
+
+<script>
+  function calculateTotals() {
+    let cropTotal = 0;
+    let loanTotal = 0;
+
+    document.querySelectorAll(".crop-pending").forEach((el) => {
+      cropTotal += Number(el.innerText.replace("₹", ""));
+    });
+
+    document.querySelectorAll(".loan-total").forEach((el) => {
+      loanTotal += Number(el.innerText.replace("₹", ""));
+    });
+
+    document.getElementById("totalCropAmount").value = cropTotal;
+    document.getElementById("totalLoanAmount").value = loanTotal;
+
+    const net = cropTotal - loanTotal;
+    const netEl = document.getElementById("selNet");
+
+    if (net > 0) {
+      netEl.innerText = "Dealer Pays Farmer :- ₹ " + net;
+      netEl.className = "form-control fw-bold text-success text-center";
+    } else if (net < 0) {
+      netEl.innerText = "Farmer Pays Dealer :- ₹ " + Math.abs(net);
+      netEl.className = "form-control fw-bold text-danger text-center";
+    } else {
+      netEl.innerText = "Fully Settled";
+      netEl.className = "form-control fw-bold text-secondary text-center";
+    }
+  }
+
+  calculateTotals();
+</script>

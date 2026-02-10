@@ -1,0 +1,136 @@
+:root {
+  --primary: #2d6a4f;
+  --primary-dark: #1b4332;
+  --primary-light: #40916c;
+  --accent: #f77f00;
+  --accent-light: #fcbf49;
+  --cream: #fffcf2;
+  --beige: #f8f4e8;
+  --earth: #8b7355;
+  --dark: #212529;
+  --light: #f8f9fa;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow-lg: rgba(0, 0, 0, 0.2);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  color: #212529;
+  background: linear-gradient(135deg, #ffffff 0%, var(--cream) 100%);
+}
+.container {
+  flex: 1;
+  margin-bottom: 5rem;
+}
+
+/* dashboard */
+.dash-icon {
+  font-size: 2.4rem;
+  color: var(--primary);
+  transition: all 0.35s ease;
+}
+
+.dash-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 255, 255, 0.35),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.dash-box:hover::after {
+  opacity: 1;
+}
+
+.dash-box:hover .dash-icon {
+  color: var(--accent-light);
+  transform: scale(1.2) translateY(-6px);
+}
+
+.dash-box span {
+  letter-spacing: 0.5px;
+}
+
+.dashboard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin: 3rem auto;
+  margin-top: 7rem;
+  margin-bottom: 8rem;
+  max-width: 1400px;
+}
+
+.dash-box {
+  width: 220px;
+  height: 160px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: #1b4332;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px var(--shadow);
+  position: relative;
+  overflow: hidden;
+  flex-direction: column;
+  text-align: center;
+}
+
+.dash-box:hover {
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-dark) 100%
+  );
+  color: white;
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px var(--shadow-lg);
+  border-color: var(--accent);
+}
+
+.pay-card {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pay-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
+
+.pay-card {
+  transition: all 0.25s ease-in-out;
+}
+
+.pay-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.15) !important;
+}
+
+.receipt-hh {
+  text-align: center;
+  margin: 20px 0;
+}
+.text-reversal {
+  color: #b91c1c;
+}
+.text-original {
+  color: #14532d;
+}

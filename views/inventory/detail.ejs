@@ -1,0 +1,240 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <!-- ================= HEADER ================= -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-success">
+      <i class="fa-solid fa-warehouse me-2 text-success"></i>Inventory Dashboard
+      <span class="badge bg-success ms-2"><%= inventory.inventoryId %></span>
+    </h3>
+
+    <div class="d-flex gap-2">
+      <a
+        href="/inventory/<%= inventory.inventoryId %>/buy"
+        class="btn btn-outline-success"
+      >
+        <i class="fa-solid fa-arrow-down-long me-1"></i> Buy Details
+      </a>
+
+      <a
+        href="/inventory/<%= inventory.inventoryId %>/sell"
+        class="btn btn-outline-primary"
+      >
+        <i class="fa-solid fa-arrow-up-long me-1"></i> Sell Details
+      </a>
+
+      <a href="javascript:history.back()" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back
+      </a>
+    </div>
+  </div>
+
+  <% const totalBuyAmount = inventory.totalBuyQuantity *
+  inventory.averageBuyPrice; const totalSellAmount = inventory.totalSellQuantity
+  * inventory.averageSellPrice; const stockValue = inventory.totalInStock *
+  inventory.averageBuyPrice; const BuyAmount = inventory.totalSellQuantity *
+  inventory.averageBuyPrice; const SellAmount = inventory.totalSellQuantity *
+  inventory.averageSellPrice; const grossProfit = SellAmount - BuyAmount; const
+  totalCharges = inventory.labourCharges + inventory.transportCharges +
+  inventory.otherCharges; const netProfit = grossProfit - totalCharges; %>
+
+  <!-- ================= CROP INFO ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Crop Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <strong>Crop Name</strong>
+          <p class="mb-0"><%= inventory.cropName %></p>
+        </div>
+
+        <div class="col-md-3">
+          <strong>Current Stock</strong>
+          <p class="fw-bold mb-0"><%= inventory.totalInStock %> Qt</p>
+        </div>
+
+        <div class="col-md-3">
+          <strong>Gunny Capacity</strong>
+          <p class="mb-0"><%= inventory.gunnyQuantity %> KG</p>
+        </div>
+
+        <div class="col-md-3">
+          <strong>Last Updated</strong>
+          <p class="mb-0"><%= inventory.lastUpdatedAt.toDateString() %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SUMMARY CARDS ================= -->
+  <div class="row row-cols-1 row-cols-md-3 g-4 text-center mb-4">
+    <!-- BUY SUMMARY -->
+    <div class="col">
+      <div class="card border-success shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Total Buy Amount</h6>
+          <h3 class="fw-bold text-success">
+            ₹ <%= totalBuyAmount.toFixed(2) %>
+          </h3>
+
+          <hr class="my-2" />
+
+          <p class="mb-0 text-muted">Avg Buy Price</p>
+          <strong>₹ <%= inventory.averageBuyPrice.toFixed(2) %></strong>
+
+          <p class="mb-0 mt-2 text-muted">Total Arrival</p>
+          <strong><%= inventory.totalBuyQuantity %> Qt</strong>
+
+          <p class="mb-0 mt-2 text-muted">Buy Gunny</p>
+          <strong><%= Math.round(inventory.buyGunny) %></strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELL SUMMARY -->
+    <div class="col">
+      <div class="card border-primary shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Total Sell Amount</h6>
+          <h3 class="fw-bold text-primary">
+            ₹ <%= totalSellAmount.toFixed(2) %>
+          </h3>
+
+          <hr class="my-2" />
+
+          <p class="mb-0 text-muted">Avg Sell Price</p>
+          <strong>₹ <%= inventory.averageSellPrice.toFixed(2) %></strong>
+
+          <p class="mb-0 mt-2 text-muted">Total Sold</p>
+          <strong><%= inventory.totalSellQuantity %> Qt</strong>
+
+          <p class="mb-0 mt-2 text-muted">Sell Gunny</p>
+          <strong><%= Math.round(inventory.sellGunny) %></strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- STOCK SUMMARY -->
+    <div class="col">
+      <div class="card border-warning shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Stock Value (Buy)</h6>
+          <h3 class="fw-bold text-warning">₹ <%= stockValue.toFixed(2) %></h3>
+
+          <hr class="my-2" />
+
+          <p class="mb-0 text-muted">Avg Buy Price</p>
+          <strong>₹ <%= inventory.averageBuyPrice.toFixed(2) %></strong>
+
+          <p class="mb-0 mt-2 text-muted">Current Stock</p>
+          <strong><%= inventory.totalInStock %> Qt</strong>
+
+          <p class="mb-0 mt-2 text-muted">In-Stock Gunny</p>
+          <strong><%= Math.round(inventory.inStockGunny) %></strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PROFIT ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Total Crop Profit</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row text-center g-3">
+        <div class="col-md-3">
+          <h6 class="text-muted mb-2">Gross Profit</h6>
+          <h5 class="fw-bold">₹ <%= grossProfit.toFixed(2) %></h5>
+        </div>
+
+        <div class="col-md-3">
+          <h6 class="text-muted mb-2">Labour Charges</h6>
+          <h5 class="text-danger">₹ <%= inventory.labourCharges %></h5>
+        </div>
+
+        <div class="col-md-3">
+          <h6 class="text-muted mb-2">Transport Charges</h6>
+          <h5 class="text-danger">₹ <%= inventory.transportCharges %></h5>
+        </div>
+
+        <div class="col-md-3">
+          <h6 class="text-muted mb-2">Other Charges</h6>
+          <h5 class="text-danger">₹ <%= inventory.otherCharges %></h5>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="text-center">
+        <h6 class="text-muted mb-2">Total Charges</h6>
+        <h5 class="text-danger fw-bold">₹ <%= totalCharges %></h5>
+
+        <h6 class="text-muted mt-3 mb-2">Net Profit</h6>
+        <h2
+          class="fw-bold <%= netProfit >= 0 ? 'text-success' : 'text-danger' %>"
+        >
+          ₹ <%= netProfit.toFixed(2) %>
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PAYMENT SUMMARY ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+      <h5 class="mb-0">Payment Summary</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3 text-center">
+        <div class="col-md-3">
+          <div class="card border-success h-100">
+            <div class="card-body">
+              <h6 class="text-muted">Paid to Farmers</h6>
+              <h5 class="fw-bold text-success">
+                ₹ <%= inventory.paymentGivePaid %>
+              </h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card border-danger h-100">
+            <div class="card-body">
+              <h6 class="text-muted">Pending to Farmers</h6>
+              <h5 class="fw-bold text-danger">
+                ₹ <%= inventory.paymentGivePending %>
+              </h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card border-primary h-100">
+            <div class="card-body">
+              <h6 class="text-muted">Received from Buyers</h6>
+              <h5 class="fw-bold text-primary">
+                ₹ <%= inventory.paymentReceivePaid %>
+              </h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card border-warning h-100">
+            <div class="card-body">
+              <h6 class="text-muted">Pending from Buyers</h6>
+              <h5 class="fw-bold text-warning">
+                ₹ <%= inventory.paymentReceivePending %>
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

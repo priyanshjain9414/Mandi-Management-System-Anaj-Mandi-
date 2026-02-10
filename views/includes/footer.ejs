@@ -1,0 +1,196 @@
+<style>
+  .modern-footer {
+    background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%);
+    color: white;
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .modern-footer::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(
+      circle,
+      rgba(247, 127, 0, 0.1) 0%,
+      transparent 70%
+    );
+    border-radius: 50%;
+  }
+
+  .modern-footer-content {
+    padding: 1.5rem 0 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .modern-footer-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    text-align: center;
+  }
+
+  .modern-footer-about h3 {
+    font-family: "Playfair Display", serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .modern-footer-about h3 i {
+    color: #fcbf49;
+    font-size: 2rem;
+  }
+
+  .modern-footer-about p {
+    opacity: 0.9;
+    margin: 0 auto 1rem;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  .modern-social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.7rem;
+  }
+
+  .modern-social-link {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .modern-social-link:hover {
+    background: linear-gradient(135deg, #f77f00 0%, #fcbf49 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(247, 127, 0, 0.4);
+    border-color: transparent;
+  }
+
+  .modern-footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    max-width: 1400px;
+    padding: 1.2rem 1.8rem 0;
+    margin-top: 0.5rem;
+  }
+
+  .modern-footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .modern-footer-copyright {
+    opacity: 0.85;
+    font-size: 0.9rem;
+  }
+
+  .modern-footer-legal {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .modern-footer-legal a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.3s;
+  }
+
+  .modern-footer-legal a:hover {
+    color: #fcbf49;
+  }
+
+  @media (max-width: 576px) {
+    .modern-footer-bottom-content {
+      flex-direction: column;
+    }
+
+    .modern-footer-legal {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .modern-footer-content {
+      padding: 1.8rem 0 1rem;
+    }
+
+    .modern-footer-grid {
+      margin-bottom: 1rem;
+    }
+  }
+</style>
+
+<footer class="modern-footer">
+  <div class="modern-footer-content">
+    <div class="modern-footer-grid">
+      <!-- ABOUT ONLY -->
+      <div class="modern-footer-about">
+        <h3 style="justify-content: center">
+          <i class="fa-solid fa-seedling"></i>
+          ANAJ MANDI
+        </h3>
+
+        <p>
+          Complete digital solution for agricultural trading businesses. Manage
+          farmers, buyers, crops, loans, inventory, and settlements with full
+          transparency and control.
+        </p>
+
+        <div class="modern-social-links" style="justify-content: center">
+          <a href="#" class="modern-social-link"
+            ><i class="fab fa-facebook-f"></i
+          ></a>
+          <a href="#" class="modern-social-link"
+            ><i class="fab fa-instagram"></i
+          ></a>
+          <a href="#" class="modern-social-link"
+            ><i class="fab fa-linkedin-in"></i
+          ></a>
+          <a href="#" class="modern-social-link"
+            ><i class="fab fa-twitter"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div class="modern-footer-bottom">
+      <div class="modern-footer-bottom-content">
+        <div class="modern-footer-copyright">
+          &copy; 2025 Anaj Mandi Private Limited. Built with
+          <i class="fa-solid fa-heart" style="color: #f77f00"></i> for Indian
+          Agriculture.
+        </div>
+
+        <div class="modern-footer-legal">
+          <a href="/">Privacy</a>
+          <a href="/">Terms</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

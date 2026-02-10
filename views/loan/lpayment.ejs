@@ -1,0 +1,134 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle rounded text-center">
+      <h4 class="fw-bold text-success mb-1">
+        <i class="fa-solid fa-hand-holding-dollar me-2"></i> Loan Payment
+      </h4>
+      <p class="text-muted mb-0">Settle Pending Loan Amounts</p>
+    </div>
+  </div>
+
+  <!-- FARMER INFO -->
+  <div class="alert alert-info">
+    <strong>Name:</strong> <%= farmer.name %><br />
+    <strong>Farmer ID:</strong> <%= farmer.farmerId %>
+  </div>
+
+  <form action="/loan/payment" method="POST">
+    <!-- Hidden Farmer Info -->
+    <input type="hidden" name="farmerId" value="<%= farmer._id %>" />
+    <input type="hidden" name="farmerName" value="<%= farmer.name %>" />
+    <input
+      type="hidden"
+      name="farmerBusinessId"
+      value="<%= farmer.farmerId %>"
+    />
+
+    <!-- LOANS TABLE -->
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Loan ID</th>
+            <th>Loan Amount</th>
+            <th>Total (Partial Paid)</th>
+            <th>Loan Paid</th>
+            <th>Loan Pending</th>
+            <th>Time (Days)</th>
+            <th>Interest (%)</th>
+            <th>Interest Amount</th>
+            <th>Total Payable</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% loans.forEach((loan, index) => { const days = Math.ceil(
+          (Date.now() - new Date(loan.createdAt)) / (1000 * 60 * 60 * 24) );
+          const base = loan.pendingAmount > 0 ? loan.pendingAmount :
+          loan.loanAmount; const interestAmount = (base * loan.interest * days)
+          / 36500; const total = Math.round(base + interestAmount); %>
+
+          <tr>
+            <td><%= loan.loanId %></td>
+            <td>₹<%= loan.loanAmount %></td>
+            <td>₹<%= loan.pendingAmount + loan.paidAmount %></td>
+            <td>₹<%= loan.paidAmount %></td>
+            <td>
+              ₹<%= loan.pendingAmount > 0 ? loan.pendingAmount : loan.loanAmount
+              %>
+            </td>
+            <td><%= days %></td>
+            <td><%= loan.interest %></td>
+            <td>₹<%= Math.round(interestAmount) %></td>
+            <td class="fw-bold total">₹<%= total %></td>
+
+            <input
+              type="hidden"
+              name="payments[<%= index %>][loanId]"
+              value="<%= loan._id %>"
+            />
+            <input
+              type="hidden"
+              class="total"
+              name="payments[<%= index %>][totalAmount]"
+              value="<%= total %>"
+            />
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAYMENT INFO -->
+    <div class="row mt-3">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Payment Mode</label>
+        <select class="form-select bg-light" disabled>
+          <option value="CREDIT" selected>Credit</option>
+        </select>
+        <input type="hidden" name="mode" value="CREDIT" />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Total Loan Amount</label>
+        <input
+          type="number"
+          id="totalLoanAmount"
+          name="totalLoanAmount"
+          class="form-control"
+          readonly
+        />
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Amount Received</label>
+        <input
+          type="number"
+          name="amountReceived"
+          class="form-control"
+          required
+        />
+      </div>
+    </div>
+
+    <button class="btn btn-success w-100 mt-4">
+      <i class="fa-solid fa-floppy-disk me-1"></i> Save Payment
+    </button>
+  </form>
+</div>
+
+<script>
+  const totalLoanAmountInput = document.getElementById("totalLoanAmount");
+
+  function calculateTotal() {
+    let total = 0;
+    document.querySelectorAll(".total").forEach((el) => {
+      total += Number(el.innerText.replace("₹", ""));
+    });
+    totalLoanAmountInput.value = total;
+  }
+
+  calculateTotal();
+</script>

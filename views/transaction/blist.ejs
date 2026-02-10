@@ -1,0 +1,128 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container-fluid mt-4">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle text-center rounded">
+      <h4 class="fw-bold text-success mb-1">Buyer Transactions</h4>
+      <p class="text-muted mb-0">Crop Payments</p>
+    </div>
+  </div>
+
+  <form class="card shadow-sm mb-4 p-3" method="GET">
+    <div class="row g-2 justify-content-center">
+      <div class="col-md-4">
+        <input
+          name="search"
+          value="<%= search || '' %>"
+          class="form-control"
+          placeholder="Search by Payment ID"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <select name="status" class="form-select">
+          <option value="">All Status</option>
+          <option value="PARTIAL-DONE">PARTIAL</option>
+          <option value="NOT-DONE">NOT DONE</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <input
+          type="date"
+          name="fromDate"
+          value="<%= fromDate || '' %>"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <input
+          type="date"
+          name="toDate"
+          value="<%= toDate || '' %>"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-success w-100">
+          <i class="fa-solid fa-filter me-1"></i> Filter
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <div class="row">
+    <% if (!timeline.length) { %>
+    <div class="col-12">
+      <p class="text-center text-muted">No crop transactions found</p>
+    </div>
+    <% } %> <% timeline.forEach(tx => { %>
+
+    <div class="col-md-6 mb-4">
+      <div
+        class="card pay-card h-100 border-0 border-top border-4 <%= tx.isReversal ? 'border-danger' : 'border-success' %>"
+      >
+        <div class="card-body">
+          <small class="text-muted">
+            <i class="fa-regular fa-clock me-1"></i>
+            <%= new Date(tx.date).toLocaleString() %>
+          </small>
+
+          <hr class="my-2" />
+
+          <h6 class="fw-bold mb-2">
+            <% if (tx.isReversal) { %> REVERSAL <% } %> CROP PAYMENT
+          </h6>
+
+          <% if (tx.isReversal) { %>
+          <p class="mb-1">
+            <strong>Reversed Payment ID:</strong> <%= tx.reversedPaymentId %>
+          </p>
+          <% } else {%>
+          <p class="mb-1"><strong>Payment ID:</strong> <%= tx.payId %></p>
+          <% } %>
+          <p class="mb-2">
+            <strong>Crop IDs:</strong> <%= tx.cropIds.join(", ") %>
+          </p>
+          <p class="mb-1">
+            <strong>Total Crop:</strong> ₹ <%= tx.totalCropAmount %>
+          </p>
+          <% if (tx.isReversal) { %>
+          <p class="mb-1">
+            <strong>Reversed:</strong> ₹ <%= Math.abs(tx.amountPaid) %>
+          </p>
+          <% } else { %>
+          <p class="mb-1"><strong>Paid:</strong> ₹ <%= tx.amountPaid %></p>
+          <% } %>
+
+          <p class="mb-1">
+            <strong>Pending:</strong> ₹ <%= tx.amountPending %>
+          </p>
+
+          <% if (tx.isReversal) { %>
+          <span class="badge bg-danger">REVERSAL</span>
+          <% } else { %>
+          <span
+            class="badge <%= tx.status === 'DONE' ? 'bg-success' : tx.status === 'PARTIAL-DONE' ? 'bg-warning text-dark' : 'bg-danger' %>"
+          >
+            <%= tx.status %>
+          </span>
+          <% } %>
+
+          <div class="mt-3 text-end">
+            <a
+              href="<%=tx.isReversal ? tx.link1 : tx.link %>"
+              class="btn btn-outline-success btn-sm"
+            >
+              View Details →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% }) %>
+  </div>
+</div>

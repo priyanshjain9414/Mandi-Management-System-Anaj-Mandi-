@@ -1,0 +1,94 @@
+<% layout("layouts/receipt") %> <%- include("../includes/receipt-header") %>
+
+<h3 style="text-align: center; color: #14532d; margin: 20px 0"><%= title %></h3>
+
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 120px">Party Type</th>
+    <td><%= person.type %></td>
+
+    <th style="width: 120px">Party Name</th>
+    <td><%= person.name %></td>
+
+    <th style="width: 120px">Party ID</th>
+    <td><%= person.businessId %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= TABLE ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Crop Details</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Crop ID</th>
+      <th>Crop (Grade)</th>
+      <th class="right">Qty (Qtl)</th>
+      <th class="right">Rate</th>
+      <th class="right">Total</th>
+
+      <% if (mode !== "PAID") { %>
+      <th class="right">Paid</th>
+      <th class="right">Pending</th>
+      <% } %>
+
+      <th class="center">Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% crops.forEach(crop => { %>
+    <tr>
+      <td><%= new Date(crop.date).toDateString() %></td>
+
+      <td><%= crop.cropId %></td>
+
+      <td>
+        <strong><%= crop.cropType %></strong><br />
+        <span style="color: #64748b">(Grade <%= crop.grade %>)</span>
+      </td>
+
+      <td class="right"><%= crop.quantity %></td>
+      <td class="right">₹ <%= crop.pricePerQuintal %></td>
+      <td class="right">₹ <%= crop.totalAmount %></td>
+
+      <% if (mode !== "PAID") { %>
+      <td class="right">₹ <%= crop.paidAmount %></td>
+      <td class="right">₹ <%= crop.pendingAmount %></td>
+      <% } %>
+
+      <td class="center">
+        <% if (crop.paymentStatus === "DONE") { %>
+        <strong style="color: green">DONE</strong>
+        <% } else if (crop.paymentStatus === "PARTIAL-DONE") { %>
+        <strong style="color: #ca8a04">PARTIAL</strong>
+        <% } else { %>
+        <strong style="color: #dc2626">PENDING</strong>
+        <% } %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<br />
+<!-- ================= FOOTER SUMMARY ================= -->
+<hr />
+
+<table style="width: 360px; margin-left: auto">
+  <tr>
+    <td>Total Amount</td>
+    <td class="right">₹ <%= crops.reduce((s,c)=>s+c.totalAmount,0) %></td>
+  </tr>
+  <tr>
+    <td>Total Paid</td>
+    <td class="right">₹ <%= crops.reduce((s,c)=>s+c.paidAmount,0) %></td>
+  </tr>
+  <tr>
+    <th>Total Pending</th>
+    <th class="right">₹ <%= crops.reduce((s,c)=>s+c.pendingAmount,0) %></th>
+  </tr>
+</table>
+
+<%- include("../includes/signature") %>

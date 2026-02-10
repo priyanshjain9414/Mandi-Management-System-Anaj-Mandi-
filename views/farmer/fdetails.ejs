@@ -1,0 +1,271 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-success">
+      <i class="fa-solid fa-user me-2 text-success"></i>Farmer Details
+      <span class="badge bg-success ms-2"><%= farmer.farmerId %></span>
+    </h3>
+
+    <div class="d-flex gap-2">
+      <% if (cropSummary.count === 0 && loanSummary.count === 0) { %>
+      <form
+        action="/farmer/<%= farmer.farmerId %>?_method=DELETE"
+        method="POST"
+      >
+        <button
+          class="btn btn-danger"
+          onclick="return confirm('Delete this farmer permanently?')"
+        >
+          <i class="fa-solid fa-trash me-1"></i>Delete Farmer
+        </button>
+      </form>
+      <% } %>
+
+      <a href="/farmer" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- Farmer Info Card -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Personal Information</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <strong>Farmer-Name:</strong>
+          <p class="mb-0"><%= farmer.name %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Farmer-Id:</strong>
+          <p class="mb-0"><%= farmer.farmerId %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Mobile:</strong>
+          <p class="mb-0"><%= farmer.mobile %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Enrolled Date:</strong>
+          <p class="mb-0">
+            <%= farmer.createdAt.toLocaleDateString('en-IN') %>
+          </p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Village:</strong>
+          <p class="mb-0"><%= farmer.village %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>City:</strong>
+          <p class="mb-0"><%= farmer.city %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>State:</strong>
+          <p class="mb-0"><%= farmer.state %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Zip-Code:</strong>
+          <p class="mb-0"><%= farmer.zip %></p>
+        </div>
+
+        <div class="col-md-12">
+          <strong>Address:</strong>
+          <p class="mb-0">
+            <%= farmer.address %>, <%= farmer.city %>, <%= farmer.state %> - <%=
+            farmer.zip %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ================= FINANCIAL SUMMARY ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Financial Summary</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-4">
+        <!-- ===== CROP ACCOUNT CARD ===== -->
+        <div class="col-md-6">
+          <div class="card h-100 border-success shadow-sm">
+            <div class="card-header bg-success-subtle fw-bold text-success">
+              <i class="fas fa-wheat-awn"></i> Crop Account
+            </div>
+
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6">
+                  <span class="text-muted small">Total Value</span>
+                  <div class="fw-bold fs-6">₹ <%= cropSummary.total %></div>
+                </div>
+
+                <div class="col-6">
+                  <span class="text-muted small">Total Crops</span>
+                  <div class="fw-bold fs-6"><%= cropSummary.count %></div>
+                </div>
+
+                <div class="col-6">
+                  <span class="text-success small">Paid Amount</span>
+                  <div class="fw-bold text-success">
+                    ₹ <%= cropSummary.paid %>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <span class="text-danger small">Pending Amount</span>
+                  <div class="fw-bold text-danger">
+                    ₹ <%= cropSummary.pending %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== LOAN ACCOUNT CARD ===== -->
+        <div class="col-md-6">
+          <div class="card h-100 border-warning shadow-sm">
+            <div class="card-header bg-warning-subtle fw-bold text-warning">
+              <i class="fa-solid fa-hand-holding-dollar me-2 text-warning"></i>
+              Loan Account
+            </div>
+
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6">
+                  <span class="text-muted small">Total Given</span>
+                  <div class="fw-bold fs-6">₹ <%= loanSummary.total %></div>
+                </div>
+
+                <div class="col-6">
+                  <span class="text-muted small">Total Loans</span>
+                  <div class="fw-bold fs-6"><%= loanSummary.count %></div>
+                </div>
+
+                <div class="col-6">
+                  <span class="text-success small">Recovered Amount</span>
+                  <div class="fw-bold text-success">
+                    ₹ <%= loanSummary.paid %>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <span class="text-danger small">Due Amount</span>
+                  <div class="fw-bold text-danger">
+                    ₹ <%= loanSummary.pending %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== NET SETTLEMENT ===== -->
+      <div
+        class="mt-4 p-3 rounded text-center border <%= netAmount >= 0 ? 'bg-success-subtle' : 'bg-danger-subtle' %>"
+      >
+        <div class="small fw-bold text-muted text-uppercase mb-1">
+          Net Settlement Position
+        </div>
+
+        <% if (netAmount > 0) { %>
+        <h5 class="fw-bold text-success mb-0">₹ <%= netAmount %></h5>
+        <small class="text-dark">Dealer pays Farmer</small>
+
+        <% } else if (netAmount < 0) { %>
+        <h5 class="fw-bold text-danger mb-0">₹ <%= Math.abs(netAmount) %></h5>
+        <small class="text-dark">Farmer pays Dealer</small>
+
+        <% } else { %>
+        <h5 class="fw-bold text-secondary mb-0">Fully Settled</h5>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ACTION PANEL ================= -->
+  <div class="card shadow-sm border-success mb-5">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Farmer Action</h5>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card main-card border-0">
+          <div class="card-body p-4">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <a
+                  href="/farmer/<%= farmer.farmerId %>/settlement"
+                  class="btn btn-success btn-action w-100"
+                >
+                  <i class="fa-solid fa-receipt"></i> Process Settlement
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a
+                  href="/farmer/<%= farmer.farmerId %>/crop/new"
+                  class="btn btn-primary btn-action w-100"
+                >
+                  <i class="fa-solid fa-plus"></i> New Crop Entry
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a
+                  href="/farmer/<%= farmer.farmerId %>/loan/new"
+                  class="btn btn-warning btn-action w-100 text-white"
+                >
+                  <i class="fa-solid fa-coins"></i> Issue New Loan
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a
+                  href="/farmer/<%= farmer.farmerId %>/transaction"
+                  class="btn btn-outline-dark btn-action w-100"
+                >
+                  <i class="fa-solid fa-clock-rotate-left"></i>
+                  Payment Logs
+                </a>
+              </div>
+            </div>
+
+            <hr class="my-4 opacity-25" />
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <a
+                  href="/farmer/<%= farmer.farmerId %>/crops"
+                  class="btn btn-light btn-action w-100 border"
+                >
+                  <i class="fa-solid fa-table-list"></i> View All Crop Records
+                </a>
+              </div>
+              <div class="col-md-6">
+                <a
+                  href="/farmer/<%= farmer.farmerId %>/loans"
+                  class="btn btn-light btn-action w-100 border"
+                >
+                  <i class="fa-solid fa-file-invoice-dollar"></i> View All Loan
+                  Records
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

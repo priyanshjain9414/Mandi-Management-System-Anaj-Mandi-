@@ -1,0 +1,248 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <!-- PAGE HEADER -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle rounded text-center">
+      <h4 class="mb-1 text-success fw-bold">
+        <i class="fa-solid fa-wheat-awn me-2"></i>
+        <% if (farmer) { %> Crops of Farmer — <%= farmer.name %> (<%=
+        farmer.farmerId %>) <% } %> <% if (buyer) { %> Crops of Buyer — <%=
+        buyer.name %> (<%= buyer.buyerId %>) <% } %>
+      </h4>
+      <p class="text-muted mb-0">Crop payment details</p>
+    </div>
+  </div>
+
+  <!-- RECEIPTS -->
+  <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
+    <a
+      href="/receipt/crops/all?<%= farmer ? `farmerId=${farmer.farmerId}` : `buyerId=${buyer.buyerId}` %>"
+      target="_blank"
+      class="btn btn-outline-success px-4"
+    >
+      <i class="fa-solid fa-receipt me-1"></i> All Crop Recipt
+    </a>
+
+    <a
+      href="/receipt/crops/pending?<%= farmer ? `farmerId=${farmer.farmerId}` : `buyerId=${buyer.buyerId}` %>"
+      target="_blank"
+      class="btn btn-outline-warning px-4"
+    >
+      <i class="fa-solid fa-hourglass-half me-1"></i> Pending Crop Recipt
+    </a>
+
+    <a
+      href="/receipt/crops/paid?<%= farmer ? `farmerId=${farmer.farmerId}` : `buyerId=${buyer.buyerId}` %>"
+      target="_blank"
+      class="btn btn-outline-primary px-4"
+    >
+      <i class="fa-solid fa-circle-check me-1"></i> Paid Crop Recipt
+    </a>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="row text-center mb-4 g-3">
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <small>Total Amount</small>
+          <h4 class="text-primary">₹ <%= totalAmount %></h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <small>Total Paid</small>
+          <h4 class="text-success">₹ <%= totalPaid %></h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <small>Total Pending</small>
+          <h4 class="text-danger">₹ <%= totalPending %></h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PENDING CROPS ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white fw-semibold">
+      Pending Crop Payments
+    </div>
+
+    <div class="card-body">
+      <% if (pendingCrops.length === 0) { %>
+      <div class="alert alert-success text-center mb-0">
+        <i class="fa-solid fa-circle-check me-1"></i> No pending crops
+      </div>
+      <% } else { %>
+
+      <form action="/crop/payment-form" method="POST">
+        <input
+          type="hidden"
+          name="personType"
+          value="<%= farmer ? 'FARMER' : 'BUYER' %>"
+        />
+        <input
+          type="hidden"
+          name="personBusinessId"
+          value="<%= farmer ? farmer.farmerId : buyer.buyerId %>"
+        />
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-success">
+              <tr>
+                <th>Select</th>
+                <th>Crop ID</th>
+                <th>Type</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Total</th>
+                <th>Paid</th>
+                <th>Pending</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% pendingCrops.forEach(crop => { %>
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    class="crop-check"
+                    name="cropIds"
+                    value="<%= crop._id %>"
+                    data-pending="<%= crop.pendingAmount %>"
+                  />
+                </td>
+
+                <td>
+                  <span class="badge bg-success rounded-pill px-3 py-2">
+                    <%= crop.cropId %>
+                  </span>
+                </td>
+
+                <td class="fw-semibold"><%= crop.cropType %></td>
+                <td><%= crop.quantity %></td>
+                <td>₹ <%= crop.pricePerQuintal %></td>
+                <td>₹ <%= crop.totalAmount %></td>
+                <td>₹ <%= crop.paidAmount %></td>
+                <td class="fw-semibold text-danger">
+                  ₹ <%= crop.pendingAmount %>
+                </td>
+
+                <td>
+                  <% if(crop.paymentStatus === 'DONE') { %>
+                  <span class="badge bg-success">Done</span>
+                  <% } else if(crop.paymentStatus === 'PARTIAL-DONE') { %>
+                  <span class="badge bg-warning text-dark">Partial</span>
+                  <% } else { %>
+                  <span class="badge bg-danger">Pending</span>
+                  <% } %>
+                </td>
+
+                <td class="text-center">
+                  <a
+                    href="/crop/<%= crop.cropId %>/cdetail"
+                    class="btn btn-sm btn-outline-success"
+                  >
+                    Details
+                  </a>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card shadow-sm mt-3 d-none" id="selectedSummary">
+          <div class="card-body text-center">
+            <h6 class="fw-bold mb-2">Selected Pending Amount</h6>
+            <h4 id="selCrop" class="text-danger">₹ 0</h4>
+            <div id="selNet" class="fw-semibold text-secondary">
+              Select crops to calculate
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-success w-100 mt-3 py-2">
+          Proceed to Payment
+        </button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+  <hr class="my-4 thick-hr" />
+  <!-- ================= PAID CROPS ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white fw-semibold">Paid Crops</div>
+
+    <div class="card-body">
+      <% if (doneCrops.length === 0) { %>
+      <div class="alert alert-success text-center mb-0">
+        No crops fully paid yet
+      </div>
+      <% } else { %>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-success">
+            <tr>
+              <th>Crop ID</th>
+              <th>Type</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th>Total</th>
+              <th>Paid</th>
+              <th>Status</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% doneCrops.forEach(crop => { %>
+            <tr>
+              <td>
+                <span class="badge bg-success rounded-pill px-3 py-2">
+                  <%= crop.cropId %>
+                </span>
+              </td>
+
+              <td class="fw-semibold"><%= crop.cropType %></td>
+              <td><%= crop.quantity %></td>
+              <td>₹ <%= crop.pricePerQuintal %></td>
+              <td>₹ <%= crop.totalAmount %></td>
+              <td class="fw-semibold">₹ <%= crop.paidAmount %></td>
+
+              <td>
+                <span class="badge bg-success-subtle text-success">Done</span>
+              </td>
+
+              <td class="text-center">
+                <a
+                  href="/crop/<%= crop.cropId %>/cdetail"
+                  class="btn btn-sm btn-outline-success"
+                >
+                  Details
+                </a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <% } %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,128 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #d8f3dc, #f1faee);
+  }
+
+  .verify-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 35px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .input-group-text {
+    background: #e9f5ec;
+    border: none;
+    color: #2d6a4f;
+  }
+
+  .form-control {
+    border-left: none;
+    padding: 12px;
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+    border-color: #52b788;
+  }
+
+  .verify-title {
+    font-weight: 600;
+    color: #1b4332;
+  }
+</style>
+
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-5">
+  <div class="col-12 mx-auto" style="max-width: 450px">
+    <div class="verify-card">
+      <h4 class="text-center mb-4 verify-title">
+        <i class="fa-solid fa-envelope-circle-check me-2"></i>
+        Verify Email
+      </h4>
+
+      <!-- SEND OTP -->
+
+      <form method="POST" action="/dealer/send-otp">
+        <!-- EMAIL (READ ONLY) -->
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            value="<%= dealer.email %>"
+            readonly
+          />
+        </div>
+
+        <!-- PASSWORD (HIDDEN BY DEFAULT) -->
+        <div class="mb-3">
+          <button
+            type="button"
+            class="btn btn-outline-success w-100"
+            id="togglePasswordBtn"
+          >
+            <i class="fa-solid fa-key me-1"></i> Change Email App Password
+          </button>
+        </div>
+
+        <div class="mb-3 d-none" id="passwordWrapper">
+          <label class="form-label">Email App Password</label>
+          <input
+            type="password"
+            name="emailAppPassword"
+            class="form-control"
+            placeholder="Enter new App Password"
+          />
+        </div>
+
+        <button class="btn btn-success w-100">
+          <i class="fa-solid fa-paper-plane me-1"></i> Send OTP
+        </button>
+      </form>
+
+      <hr />
+      <!--  VERIFY OTP -->
+      <form method="POST" action="/dealer/verify-otp">
+        <div class="mb-3">
+          <label class="form-label">Enter OTP</label>
+          <input
+            type="text"
+            name="otp"
+            class="form-control"
+            placeholder="6-digit OTP"
+            required
+          />
+        </div>
+
+        <button class="btn btn-success w-100">
+          <i class="fa-solid fa-check me-1"></i> Verify OTP
+        </button>
+      </form>
+
+      <hr />
+
+      <form method="POST" action="/dealer/resend-otp">
+        <button class="btn btn-outline-success w-100">
+          <i class="fa-solid fa-rotate-right me-1"></i> Resend OTP
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  const toggleBtn = document.getElementById("togglePasswordBtn");
+  const passwordWrapper = document.getElementById("passwordWrapper");
+
+  toggleBtn.addEventListener("click", () => {
+    passwordWrapper.classList.toggle("d-none");
+
+    toggleBtn.innerHTML = passwordWrapper.classList.contains("d-none")
+      ? '<i class="fa-solid fa-key me-1"></i> Change Email App Password'
+      : '<i class="fa-solid fa-xmark me-1"></i> Cancel Password Change';
+  });
+</script>

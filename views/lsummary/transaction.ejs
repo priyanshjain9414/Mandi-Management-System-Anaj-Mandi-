@@ -1,0 +1,222 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container-fluid px-5 mt-4">
+  <!-- HEADER -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle text-center rounded">
+      <h4 class="fw-bold text-success">
+        <i class="fa-solid fa-clock-rotate-left me-2"></i> Loan Timeline
+      </h4>
+      <p class="text-muted mb-0">All loans & payment history</p>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <form class="card shadow-sm mb-4 p-3">
+    <div class="card-body p-1 col-md-5 mx-auto mb-1">
+      <div class="btn-group w-100" role="group">
+        <input type="radio" class="btn-check" name="view" id="viewAll" value=""
+        <%= !view ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="viewAll">All</label>
+
+        <input type="radio" class="btn-check" name="view" id="viewLoan"
+        value="LOAN" <%= view === "LOAN" ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="viewLoan">Loan</label>
+
+        <input type="radio" class="btn-check" name="view" id="viewPayment"
+        value="PAYMENT" <%= view === "PAYMENT" ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="viewPayment">Payment</label>
+      </div>
+    </div>
+
+    <div class="row g-2">
+      <div class="col-md-4">
+        <input
+          name="search"
+          value="<%= search || '' %>"
+          class="form-control"
+          placeholder="Loan ID / Farmer ID / Name"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <select name="status" class="form-select">
+          <option value="">All Status</option>
+          <option value="ONGOING">ONGOING</option>
+          <option value="PARTIAL-FINISHED">PARTIAL</option>
+          <option value="FINISHED">FINISHED</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <input
+          type="date"
+          name="fromDate"
+          value="<%= fromDate || '' %>"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <input
+          type="date"
+          name="toDate"
+          value="<%= toDate || '' %>"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-success w-100">
+          <i class="fa-solid fa-filter me-1"></i> Filter
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- TIMELINE -->
+  <% if (timeline.length === 0) { %>
+  <div class="alert alert-success text-center">No records found</div>
+  <% } %> <% timeline.forEach(item => { %>
+  <div class="card shadow-lg mb-3">
+    <div class="card-body row">
+      <!-- LEFT SIDE -->
+      <div class="col-md-7">
+        <h6 class="text-muted fw-bold mb-1">
+          <i class="fa-regular fa-clock me-1"></i>
+          <%= new Date(item.date).toLocaleString() %>
+        </h6>
+
+        <p class="fw-bold mb-1">
+          <% if (item.type === "LOAN") { %> Loan Created <% } else if (item.type
+          === "PAYMENT" && item.isReversal) { %> Loan Payment Reversal <% } else
+          if (item.type === "SETTLEMENT" && item.isReversal) { %> Loan
+          Settlement Reversal <% } else if (item.type === "SETTLEMENT") { %>
+          Loan Settlement <% } else { %> Loan Payment <% } %>
+        </p>
+
+        <% if (item.type !== "LOAN") { %>
+        <p class="mb-1">
+          Payment ID: <%= item.isReversal ? item.reversedPaymentId :
+          item.paymentId %>
+        </p>
+        <% } %>
+
+        <p class="mb-1">Loan ID: <%= item.left.loanId %></p>
+
+        <p class="mb-1">
+          Farmer: <%= item.left.farmer %> (<%= item.left.farmerId || "-" %>)
+        </p>
+
+        <% if (item.type === "LOAN") { %>
+        <p class="mb-1">
+          Loan Amount: ₹ <%= Number(item.left.loanAmount ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="mb-1">Interest Rate: <%= item.left.interestRate %> %</p>
+        <% } %> <% if (item.type !== "LOAN") { %>
+
+        <p class="mb-1">
+          Loan Amount: ₹ <%= Number(item.left.loanAmount ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="mb-1">
+          Pending Before: ₹ <%= item.isReversal ? (item.left.pendingBefore -
+          Math.abs(item.left.paidAmount) + item.left.interestAmount)
+          :Number(item.left.pendingBefore || 0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="mb-1">
+          Interest Charged: ₹ <%= Number(item.left.interestAmount ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="mb-1">
+          <%= item.isReversal ? "Reverse Amount:" : "Paid Amount:" %> ₹ <%=
+          Number(Math.abs(item.left.paidAmount) || 0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="mb-1">
+          Pending After: ₹ <%= Number(item.left.pendingAfter ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <% } %> <% if (item.isReversal) { %>
+        <span class="badge bg-danger">REVERSED</span>
+        <% } else if (item.type !== "LOAN") { %>
+        <span
+          class="badge bg-<%= item.left.status === 'FINISHED' ? 'success' : 'warning' %>"
+        >
+          <%= item.left.status %>
+        </span>
+        <% } else { %>
+        <span class="badge bg-warning">ONGOING</span>
+        <% } %>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="col-md-5 border-start d-flex flex-column">
+        <h6 class="fw-bold text-success">Loan Snapshot</h6>
+
+        <p class="mb-1">
+          Total Loan: ₹ <%= Number(item.right.totalLoan ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="mb-1">
+          Total Interest: ₹ <%= Number(item.right.totalInterest ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="mb-1">
+          Total Payable: ₹ <%= Number(item.right.totalAmount ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="mb-1">
+          Total Paid: ₹ <%= Number(item.right.totalPaid ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <p class="fw-bold mb-1">
+          Total Pending: ₹ <%= Number(item.right.totalPending ||
+          0).toLocaleString('en-IN') %>
+        </p>
+
+        <div class="mt-auto text-end">
+          <% if(item.type === "LOAN"){ %>
+
+          <a
+            href="/loan/<%= item.left.loanId %>/ldetail"
+            class="btn btn-sm btn-outline-success shadow-sm"
+          >
+            View Detail →
+          </a>
+
+          <% } else if(item.type === "PAYMENT"){ %>
+
+          <a
+            href="/loan/payment/<%= item.paymentId %>"
+            class="btn btn-sm btn-outline-success shadow-sm"
+          >
+            View Detail →
+          </a>
+
+          <% } else if(item.type === "SETTLEMENT"){ %>
+
+          <a
+            href="/settlement/<%= item.paymentId %>/detail"
+            class="btn btn-sm btn-outline-success shadow-sm"
+          >
+            View Detail →
+          </a>
+
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>

@@ -1,0 +1,171 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <% if (lp.isReversal) { %>
+  <div class="alert alert-danger text-center fw-bold mb-4">
+    <i class="fa-solid fa-rotate-left me-1"></i> REVERSAL PAYMENT <br />
+    The reverses payment of :- <strong><%= lp.paymentId %></strong>
+  </div>
+  <% } %>
+
+  <!-- ===== HEADER SUMMARY ===== -->
+  <div class="card shadow-sm mb-4 border-0">
+    <div
+      class="card-body rounded <%= lp.isReversal ? 'bg-danger-subtle' : 'bg-success-subtle' %>"
+    >
+      <div class="row">
+        <div class="col-md-6">
+          <h4
+            class="fw-bold mb-1 <%= lp.isReversal ? 'text-danger' : 'text-success' %>"
+          >
+            <%= lp.isReversal ? 'Reversal ' : '' %>Loan Payment • <%=
+            lp.isReversal ? lp.reversedPaymentId : lp.paymentId %>
+          </h4>
+
+          <p class="mb-0 text-muted">
+            <strong>Farmer:</strong>
+            <%= lp.farmerName %> (<%= lp.farmerBusinessId %>)
+          </p>
+
+          <small class="text-muted">
+            <i class="fa-regular fa-clock me-1"></i>
+            <%= new Date(lp.date).toLocaleString() %>
+          </small>
+        </div>
+
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+          <% if (!lp.isReversal) { %>
+          <form
+            action="/loan/payment/<%= lp.paymentId %>/reverse"
+            method="POST"
+            class="d-inline"
+            onsubmit="return confirm('Reverse this loan payment?')"
+          >
+            <button class="btn btn-outline-danger btn-sm">
+              <i class="fa-solid fa-rotate-left me-1"></i> Reverse Payment
+            </button>
+          </form>
+          <% } %>
+
+          <a
+            href="/receipt/loan-payment/<%= lp.isReversal ? lp.reversedPaymentId : lp.paymentId %>"
+            target="_blank"
+            class="btn btn-outline-secondary btn-sm"
+          >
+            <i class="fa-solid fa-print me-1"></i> Print Receipt
+          </a>
+
+          <span
+            class="badge fs-6 px-3 py-2 <%= lp.isReversal ? 'bg-danger' : lp.status === 'DONE' ? 'bg-success' : 'bg-warning text-dark' %>"
+          >
+            <%= lp.isReversal ? 'REVERSED' : lp.status %>
+          </span>
+
+          <p class="mt-2 mb-0">
+            <strong>Mode:</strong> <%= lp.isReversal ? 'CREDIT' : lp.mode %>
+          </p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row text-center">
+        <div class="col-md-4">
+          <h6 class="text-muted">
+            <%= lp.isReversal ? 'Total Pending (Before)' : 'Total Loan Amount'
+            %>
+          </h6>
+          <h5 class="fw-bold">₹ <%= lp.totalLoanAmount %></h5>
+        </div>
+        <div class="col-md-4">
+          <h6 class="text-muted"><%= lp.isReversal ? 'Reversed' : 'Paid' %></h6>
+          <h5
+            class="fw-bold <%= lp.isReversal ? 'text-danger' : 'text-success' %>"
+          >
+            ₹ <%= Math.abs(lp.paidAmount) %>
+          </h5>
+        </div>
+        <div class="col-md-4">
+          <h6 class="text-muted">Pending (After)</h6>
+          <h5 class="fw-bold text-danger">₹ <%= lp.pendingAmount %></h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LOANS LIST ===== -->
+  <h5 class="fw-bold mb-3">
+    <%= lp.isReversal ? 'Reversed Loan Details' : 'Loan Details' %>
+  </h5>
+
+  <div class="row">
+    <% lp.payments.forEach(p => { %>
+    <div class="col-md-6 mb-4">
+      <div
+        class="card pay-card h-100 border-0 border-start border-4 <%= lp.isReversal ? 'border-danger' : 'border-warning' %>"
+      >
+        <div class="card-body">
+          <h6
+            class="fw-bold mb-1 <%= lp.isReversal ? 'text-danger' : 'text-warning' %>"
+          >
+            Loan • <%= p.loanBusinessId %>
+          </h6>
+
+          <hr class="my-2" />
+
+          <p class="mb-1">
+            <strong>Loan Amount:</strong> ₹ <%= p.loanAmount %>
+          </p>
+          <p class="mb-1">
+            <strong>Interest Rate:</strong> <%= p.interestRate %> %
+          </p>
+          <p class="mb-1">
+            <strong>Period:</strong> <%= p.periodIndays %> days
+          </p>
+
+          <hr />
+
+          <p class="mb-1 text-muted">
+            Principal Pending Before: ₹ <%= lp.isReversal ? p.totalPayableBefore
+            - Math.abs(p.paidAmount) : p.principalPendingBefore %>
+          </p>
+          <p class="mb-1 text-muted">
+            Interest Charged: ₹ <%= p.interestAmount %>
+          </p>
+          <p class="mb-1">
+            <strong>Total Payable:</strong>
+            ₹ <%= lp.isReversal ? p.principalPendingBefore -
+            Math.abs(p.paidAmount) : p.totalPayableBefore %>
+          </p>
+
+          <hr />
+
+          <p class="mb-1 <%= lp.isReversal ? 'text-danger' : 'text-success' %>">
+            <%= lp.isReversal ? 'Reversed:' : 'Paid Now:' %> ₹ <%=
+            Math.abs(p.paidAmount) %>
+          </p>
+
+          <p class="mb-1 text-danger">
+            Pending After: ₹ <%= p.pendingAmountAfter %>
+          </p>
+
+          <div class="d-flex align-items-center mt-2">
+            <span
+              class="badge <%= lp.isReversal ? 'bg-danger' : p.loanStatusAfter === 'FINISHED' ? 'bg-success' : 'bg-warning text-dark' %>"
+            >
+              <%= lp.isReversal ? 'REVERSED' : p.loanStatusAfter %>
+            </span>
+
+            <a
+              href="/loan/<%= p.loanBusinessId %>/ldetail"
+              class="btn btn-sm <%= lp.isReversal ? 'btn-outline-danger' : 'btn-outline-warning' %> ms-auto"
+            >
+              View Loan Details →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>

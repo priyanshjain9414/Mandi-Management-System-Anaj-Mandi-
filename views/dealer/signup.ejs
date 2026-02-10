@@ -1,0 +1,292 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #d8f3dc, #f1faee);
+  }
+
+  .register-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .wide-container {
+    max-width: 1100px;
+  }
+
+  .input-group-text {
+    background: #e9f5ec;
+    border: none;
+    color: #2d6a4f;
+  }
+
+  .form-control,
+  textarea {
+    border-left: none;
+    padding: 12px;
+  }
+
+  .form-control:focus,
+  textarea:focus {
+    box-shadow: none;
+    border-color: #52b788;
+  }
+
+  .register-title {
+    font-weight: 600;
+    color: #1b4332;
+  }
+</style>
+
+<div class="row mt-5">
+  <div class="col-12 mx-auto wide-container">
+    <div class="register-card">
+      <h3 class="text-center mb-4 register-title">
+        <i class="fa-solid fa-store me-2"></i> Dealer Registration
+      </h3>
+
+      <form action="/signup" method="post" novalidate>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-user"></i
+              ></span>
+              <input
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Dealer Name"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-shop"></i
+              ></span>
+              <input
+                type="text"
+                name="shopNo"
+                class="form-control"
+                placeholder="Shop Number"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-building"></i
+              ></span>
+              <input
+                type="text"
+                name="firmName"
+                class="form-control"
+                placeholder="Firm Name"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-receipt"></i
+              ></span>
+              <input
+                type="text"
+                name="gstNo"
+                class="form-control"
+                placeholder="GST Number"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-phone"></i
+              ></span>
+              <input
+                type="tel"
+                name="contactNumber1"
+                class="form-control"
+                placeholder="Primary Contact"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-phone-volume"></i
+              ></span>
+              <input
+                type="tel"
+                name="contactNumber2"
+                class="form-control"
+                placeholder="Secondary Contact"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-envelope"></i
+              ></span>
+              <input
+                type="email"
+                name="email"
+                class="form-control"
+                placeholder="Email"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-lock"></i
+              ></span>
+              <input
+                type="password"
+                name="security"
+                class="form-control"
+                placeholder="Set Password For Mandi App"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fa-solid fa-paper-plane"></i>
+              </span>
+              <input
+                type="email"
+                name="emailSender"
+                class="form-control"
+                placeholder="Email Sender (e.g. yourmail@gmail.com)"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fa-solid fa-key"></i>
+              </span>
+              <input
+                type="password"
+                name="emailAppPassword"
+                class="form-control"
+                placeholder="Email App Password"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-8 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-location-dot"></i
+              ></span>
+              <textarea
+                name="address"
+                class="form-control"
+                rows="2"
+                placeholder="Full Address"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-map-pin"></i
+              ></span>
+              <input
+                type="number"
+                name="zip"
+                class="form-control"
+                placeholder="ZIP Code"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-city"></i
+              ></span>
+              <input
+                type="text"
+                name="city"
+                class="form-control"
+                placeholder="City"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-4">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-flag"></i
+              ></span>
+              <input
+                type="text"
+                name="state"
+                class="form-control"
+                placeholder="State"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-success w-100">
+          <i class="fa-solid fa-user-plus me-1"></i> Register Dealer
+        </button>
+
+        <p class="text-center mt-3 mb-0 text-muted">
+          Already have an account?
+          <a
+            href="/login"
+            class="fw-semibold text-success text-decoration-none"
+          >
+            Login Account
+          </a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

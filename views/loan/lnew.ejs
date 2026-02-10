@@ -1,0 +1,131 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #d8f3dc, #f1faee);
+  }
+
+  .register-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
+  }
+
+  .wide-container {
+    max-width: 900px;
+  }
+
+  .input-group-text {
+    background: #e9f5ec;
+    border: none;
+    color: #2d6a4f;
+  }
+
+  .form-control,
+  textarea {
+    border-left: none;
+    padding: 12px;
+  }
+
+  .form-control:focus,
+  textarea:focus {
+    box-shadow: none;
+    border-color: #52b788;
+  }
+
+  .register-title {
+    font-weight: 600;
+    color: #1b4332;
+  }
+</style>
+
+<div class="row mt-5">
+  <div class="col-12 mx-auto wide-container">
+    <div class="register-card">
+      <h3 class="text-center mb-4 register-title">
+        <i class="fa-solid fa-hand-holding-dollar me-2"></i> Add Loan Entry
+      </h3>
+
+      <!-- FARMER INFO -->
+      <div class="alert alert-success mb-4">
+        <strong>Type:</strong> FARMER | <strong>Name:</strong> <%= farmer.name
+        %> | <strong>ID:</strong> <%= farmer.farmerId %>
+      </div>
+
+      <form action="/loan/new" method="POST" novalidate>
+        <!-- Hidden -->
+        <input type="hidden" name="farmerId" value="<%= farmer._id %>" />
+        <input
+          type="hidden"
+          name="farmerBusinessId"
+          value="<%= farmer.farmerId %>"
+        />
+        <input type="hidden" name="personName" value="<%= farmer.name %>" />
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-coins"></i
+              ></span>
+              <input
+                type="number"
+                name="loanAmount"
+                class="form-control"
+                placeholder="Loan Amount (₹)"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-percent"></i
+              ></span>
+              <input
+                type="number"
+                name="interest"
+                class="form-control"
+                placeholder="Interest (%)"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 mb-4">
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="fa-solid fa-pen"></i
+              ></span>
+              <textarea
+                name="remark"
+                class="form-control"
+                rows="2"
+                placeholder="Loan Remark / Purpose"
+                required
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-success w-100">
+            <i class="fa-solid fa-plus me-1"></i> Add Loan
+          </button>
+
+          <a
+            href="javascript:history.back()"
+            class="btn btn-outline-secondary w-100"
+          >
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

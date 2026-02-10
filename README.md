@@ -127,6 +127,8 @@ SESSION_SECRET=your_secret_key
 5. Start the server using npm start  
 ```bash
 npm start
+```
+
 ---
 
 ##  Use Cases

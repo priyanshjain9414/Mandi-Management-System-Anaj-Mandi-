@@ -54,7 +54,7 @@ module.exports.signup = async (req, res, next) => {
       city,
       state,
       zip,
-      emailVerified: false,
+      emailVerified: true,
     });
 
     const registeredDealer = await Dealer.register(dealer, security);

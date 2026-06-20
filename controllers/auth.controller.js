@@ -54,14 +54,14 @@ module.exports.signup = async (req, res, next) => {
       city,
       state,
       zip,
-      emailVerified: false,
+      emailVerified: true,
     });
 
     const registeredDealer = await Dealer.register(dealer, security);
 
     req.login(registeredDealer, (err) => {
       if (err) return next(err);
-      req.flash("success", "Account created. Please verify your email.");
+      req.flash("success", "Account created successfully.");
       res.redirect("/dealer/profile");
     });
   } catch (err) {

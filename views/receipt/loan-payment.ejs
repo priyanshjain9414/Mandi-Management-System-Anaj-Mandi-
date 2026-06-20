@@ -1,0 +1,143 @@
+<% layout("layouts/receipt") %> <%- include("../includes/receipt-header") %>
+
+<h3 class="receipt-hh <%= lp.isReversal ? 'text-reversal' : 'text-original' %>">
+  <%= lp.isReversal ? 'Loan Payment Reversal Receipt' : 'Loan Payment Receipt'
+  %>
+</h3>
+
+<!-- ================= PARTY DETAILS ================= -->
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 120px">Party Type</th>
+    <td>FARMER</td>
+
+    <th style="width: 120px">Party Name</th>
+    <td><%= lp.farmerName %></td>
+
+    <th style="width: 120px">Party ID</th>
+    <td><%= lp.farmerBusinessId %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= PAYMENT META ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Payment Details</h4>
+
+<% if (lp.isReversal) { %>
+<div
+  style="
+    margin: 4px 0 10px;
+    font-size: 14px;
+    color: #b91c1c;
+    border-left: 3px solid #b91c1c;
+    padding-left: 8px;
+  "
+>
+  <strong>Reversal of Payment ID:</strong> <%= lp.paymentId %>
+</div>
+<% } %>
+
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 140px">Payment ID</th>
+    <td><%= receiptId %></td>
+
+    <th style="width: 140px">Mode</th>
+    <td><%= lp.isReversal ? 'REVERSAL' : lp.mode %></td>
+
+    <th style="width: 140px">Date</th>
+    <td><%= new Date(lp.date).toDateString() %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= LOAN PAYMENT DETAILS ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Loan-wise Payment Details</h4>
+<% let interest = 0; %>
+<table>
+  <thead>
+    <tr>
+      <th>Loan ID</th>
+      <th class="right">Principal</th>
+      <th class="right">Pending<br />Before</th>
+      <% if(!lp.isReversal){ %>
+      <th class="center">Period<br />(Days)</th>
+      <%}%>
+
+      <th class="right">Interest</th>
+      <th class="right">Total<br />Before</th>
+      <th class="right"><%= lp.isReversal ? 'Reversed' : 'Paid' %></th>
+      <th class="right">Pending<br />After</th>
+      <th class="center">Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% lp.payments.forEach(p => {interest += p.interestAmount %>
+
+    <tr>
+      <td><%= p.loanBusinessId %></td>
+      <td class="right">₹ <%= p.loanAmount %></td>
+      <td class="right">
+        ₹ <%= lp.isReversal ? p.totalPayableBefore - Math.abs(p.paidAmount) :
+        p.principalPendingBefore %>
+      </td>
+
+      <% if(!lp.isReversal){ %>
+      <td class="center"><%= lp.isReversal ? '—' : p.periodIndays %></td>
+      <%}%>
+      <td class="right">₹ <%= p.interestAmount %></td>
+
+      <td class="right">
+        ₹ <%= lp.isReversal ? p.principalPendingBefore-Math.abs(p.paidAmount) :
+        p.totalPayableBefore %>
+      </td>
+
+      <td class="right">₹ <%= p.paidAmount %></td>
+
+      <td class="right">₹ <%= p.pendingAmountAfter %></td>
+
+      <td class="center">
+        <strong><%= lp.isReversal ? 'REVERSED' : p.loanStatusAfter %></strong>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<br />
+
+<!-- ================= LOAN PAYMENT SUMMARY ================= -->
+<hr />
+<h4 style="margin: 18px 0 8px; color: #14532d">Payment Summary</h4>
+
+<table style="width: 360px; margin-left: auto">
+  <tr>
+    <td>Total Loan Payable</td>
+    <td class="right">₹ <%= lp.totalLoanAmount %></td>
+  </tr>
+
+  <tr>
+    <td>Total Interest</td>
+    <td class="right">₹ <%= interest %></td>
+  </tr>
+
+  <tr>
+    <td><%= lp.isReversal ? 'Amount Reversed' : 'Amount Paid' %></td>
+    <td class="right">₹ <%= Math.abs(lp.amountReceived) %></td>
+  </tr>
+
+  <tr>
+    <th>Pending Amount</th>
+    <th class="right">₹ <%= lp.pendingAmount %></th>
+  </tr>
+
+  <tr>
+    <td>Status</td>
+    <th><%=lp.status %></th>
+  </tr>
+</table>
+
+<%- include("../includes/signature") %>

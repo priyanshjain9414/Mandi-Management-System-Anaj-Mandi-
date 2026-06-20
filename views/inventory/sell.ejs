@@ -1,0 +1,204 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container-fluid px-5 mt-4">
+  <!-- HEADER -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body bg-success-subtle text-center">
+      <h4 class="fw-bold text-success">
+        Sell Timeline – <%= inventory.cropName %>
+      </h4>
+      <p class="text-muted mb-0">Crop Selled & Payments</p>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <form class="card shadow-sm mb-4 p-3">
+    <div class="card-body p-1 col-md-5 mx-auto mb-1">
+      <div class="btn-group w-100" role="group">
+        <input type="radio" class="btn-check" name="view" id="viewAll" value=""
+        <%= !view ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="viewAll">All</label>
+
+        <input type="radio" class="btn-check" name="view" id="viewCrop"
+        value="CROP" <%= view === "CROP" ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="viewCrop"> Crop </label>
+
+        <input type="radio" class="btn-check" name="view" id="viewPayment"
+        value="PAYMENT" <%= view === "PAYMENT" ? "checked" : "" %> />
+        <label class="btn btn-outline-success" for="viewPayment">
+          Payment
+        </label>
+      </div>
+    </div>
+    <div class="row g-2">
+      <div class="col-md-4">
+        <input
+          name="search"
+          value="<%= search || '' %>"
+          class="form-control"
+          placeholder="Crop ID / Buyer ID /Name"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <select name="status" class="form-select">
+          <option value="">All Status</option>
+          <option value="DONE">DONE</option>
+          <option value="PARTIAL-DONE">PARTIAL</option>
+          <option value="NOT-DONE">NOT DONE</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <input
+          type="date"
+          name="fromDate"
+          value="<%= fromDate || '' %>"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <input
+          type="date"
+          name="toDate"
+          value="<%= toDate || '' %>"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-success w-100">Filter</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- TIMELINE -->
+  <% if (timeline.length === 0) { %>
+  <div class="alert alert-success text-center">✔ No records found</div>
+  <% } %> <% timeline.forEach(item => { %>
+  <div class="card shadow-lg mb-3">
+    <div class="card-body row">
+      <!-- LEFT SIDE -->
+      <div class="col-md-7">
+        <h6 class="text-muted fw-bold mb-1">
+          <%= new Date(item.date).toLocaleString() %>
+        </h6>
+
+        <p class="fw-bold mb-1">
+          <% if(item.type === "CROP"){ %> Crop Selled <% } else if(item.type ===
+          "PAYMENT" && item.isReversal){ %> Payment Reversal <% } else
+          if(item.type === "PAYMENT"){ %> Selled Payment <% } else { %> Crop
+          Arrival <% } %>
+        </p>
+
+        <% if (item.type === "PAYMENT") { %>
+        <p class="mb-1">
+          Payment ID: <%= item.isReversal ? item.reversedPaymentId :
+          item.paymentId %>
+        </p>
+        <% } %>
+
+        <p class="mb-1">Crop ID: <%= item.left.cropId %></p>
+
+        <% if(item.left.buyer){ %>
+        <p class="mb-1">
+          Buyer: <%= item.left.buyer %> (<%= item.left.buyerId %>)
+        </p>
+        <% } %><% if(item.type !== "PAYMENT"){ %>
+        <p class="mb-1">Gunny Quantity (KG): <%= item.left.gunnyQuantity %></p>
+        <p class="mb-1">
+          No of Gunny Bags: <%= Math.round(item.left.noOfGunny) %>
+        </p>
+        <% } %>
+
+        <p class="mb-1">Quantity: <%= item.left.quantity %></p>
+
+        <% if(item.type !== "PAYMENT"){ %>
+        <p class="mb-1 mt-3">Total Charges: <%= item.left.totalCharges %></p>
+        <% } %> <% if(item.type === "CROP"){ %>
+        <p class="mb-1">Grade: <%= item.left.grade %></p>
+
+        <p class="mb-1">Price (Quintal): ₹ <%= item.left.pricePerQuintal%></p>
+        <%}%> <% if(item.type !== "BUY"){ %>
+        <p class="mb-1">Total Amount: ₹ <%= item.left.totalAmount %></p>
+        <%}%> <% if(item.left.pendingBefore){ %>
+        <p class="mb-1 mt-3">
+          Pending Before: ₹ <%= item.isReversal ? item.left.pendingBefore -
+          Math.abs(item.left.paid) : item.left.pendingBefore %>
+        </p>
+        <%}%> <% if(item.type === "PAYMENT"){ %>
+        <p
+          class="mb-1 <%= item.isReversal ? 'text-danger ' : 'text-success' %>"
+        >
+          <%= item.isReversal ? 'Reversed:' : 'Paid:' %> ₹ <%=
+          Math.abs(item.left.paid) %>
+        </p>
+
+        <p class="mb-1">
+          Pending After: ₹ <%= item.type === "CROP" ? item.left.pending :
+          item.left.pendingAfter %>
+        </p>
+        <%}%> <% if(item.type !== "PAYMENT"){ %>
+        <span class="badge bg-warning"> NOT-DONE </span><% } else{ %>
+        <span
+          class="badge bg-<%= item.left.status === 'DONE' ? 'success' : 'warning' %>"
+        >
+          <%= item.left.status %>
+        </span>
+        <%}%>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="col-md-5 border-start d-flex flex-column">
+        <h6 class="fw-bold text-success">Inventory Snapshot</h6>
+        <% if(item.type !== "PAYMENT"){ %>
+        <p class="mb-1">
+          Total Charges: ₹ <%= item.right.chargeTotal.toFixed(2) %>
+        </p>
+        <p class="mb-1">
+          Total Gunny Bags: ₹ <%= Math.round(item.right.inStockGunny) %>
+        </p>
+        <%}%>
+
+        <p class="mb-1">Total Quantity: <%= item.right.totalQuantity %></p>
+
+        <% if(item.type != "BUY"){ %> <% const buyPrice =
+        item.right.buyAveragePrice ?? 0; const sellPrice =
+        item.right.sellAveragePrice ?? 0; %>
+
+        <!-- INVENTORY VALUE (ALWAYS BUY PRICE) -->
+        <% if (buyPrice > 0) { %>
+        <p class="mb-1">
+          Average Buy Price (Quintal): ₹ <%= buyPrice.toFixed(2) %>
+        </p>
+
+        <p class="mb-0">
+          Inventory Value: ₹ <%= Math.ceil(buyPrice * item.right.totalQuantity)
+          %>
+        </p>
+        <% } %>
+        <hr />
+        <h6 class="fw-bold text-success mt-0 mb-1">Selled Payment Snapshot</h6>
+        <% if (sellPrice > 0) { %>
+        <p class="mb-1">
+          Average Sell Price (Quintal): ₹ <%= sellPrice.toFixed(2) %>
+        </p>
+        <% } %>
+        <p class="mb-1">Total Amount: ₹ <%= item.right.totalAmount %></p>
+        <p class="mb-1">Total Paid: ₹ <%= item.right.totalPaid %></p>
+        <p class="mb-1">Total Pending: ₹ <%= item.right.totalPending %></p>
+        <% }%>
+        <div class="mt-auto text-end">
+          <a
+            href="<%= item.isReversal ? item.link1 : item.link %>"
+            class="btn btn-sm btn-outline-success shadow-sm"
+          >
+            Show Detail →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>

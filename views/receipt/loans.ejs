@@ -1,0 +1,101 @@
+<% layout("layouts/receipt") %> <%- include("../includes/receipt-header") %>
+
+<h3 style="text-align: center; color: #14532d; margin: 20px 0"><%= title %></h3>
+
+<!-- ================= PARTY DETAILS ================= -->
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 120px">Party Type</th>
+    <td><%= person.type %></td>
+
+    <th style="width: 120px">Farmer Name</th>
+    <td><%= person.name %></td>
+
+    <th style="width: 120px">Farmer ID</th>
+    <td><%= person.businessId %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= LOAN DETAILS ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Loan Details</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Loan ID</th>
+      <th class="right">Principal</th>
+      <th class="center">Interest %</th>
+      <th class="right">Interest Amt</th>
+      <th class="right">Total</th>
+
+      <% if (mode !== "PAID") { %>
+      <th class="right">Paid</th>
+      <th class="right">Pending</th>
+      <% } %>
+
+      <th class="center">Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% loans.forEach(loan => { %>
+    <tr>
+      <td><%= new Date(loan.createdAt).toDateString() %></td>
+
+      <td><%= loan.loanId %></td>
+
+      <td class="right">₹ <%= loan.loanAmount %></td>
+
+      <td class="center"><%= loan.interest %> %</td>
+
+      <td class="right">₹ <%= loan.interestAmount %></td>
+
+      <td class="right">₹ <%= loan.loanAmount + loan.interestAmount %></td>
+
+      <% if (mode !== "PAID") { %>
+      <td class="right">₹ <%= loan.paidAmount %></td>
+      <td class="right">₹ <%= loan.pendingAmount %></td>
+      <% } %>
+
+      <td class="center">
+        <% if (loan.status === "FINISHED") { %>
+        <strong style="color: green">PAID</strong>
+        <% } else if (loan.status === "PARTIAL-FINISHED") { %>
+        <strong style="color: #ca8a04">PARTIAL</strong>
+        <% } else { %>
+        <strong style="color: #dc2626">PENDING</strong>
+        <% } %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<br />
+
+<!-- ================= SUMMARY ================= -->
+<hr />
+
+<table style="width: 360px; margin-left: auto">
+  <tr>
+    <td>Total Loan Amount</td>
+    <td class="right">
+      ₹ <%= loans.reduce((s,l)=>s+(l.loanAmount+l.interestAmount),0) %>
+    </td>
+  </tr>
+
+  <tr>
+    <td>Total Paid</td>
+    <td class="right">₹ <%= loans.reduce((s,l)=>s+l.paidAmount,0) %></td>
+  </tr>
+
+  <tr>
+    <th>Total Pending</th>
+    <th class="right">₹ <%= loans.reduce((s,l)=>s+l.pendingAmount,0) %></th>
+  </tr>
+</table>
+
+<%- include("../includes/signature") %>

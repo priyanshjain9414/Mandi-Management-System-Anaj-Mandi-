@@ -1,0 +1,131 @@
+<% layout("layouts/receipt") %> <%- include("../includes/receipt-header") %>
+
+<h3 class="receipt-hh <%= cp.isReversal ? 'text-reversal' : 'text-original' %>">
+  <%= cp.isReversal ? 'Crop Payment Reversal Receipt' : 'Crop Payment Receipt'
+  %>
+</h3>
+
+<!-- ================= PARTY DETAILS ================= -->
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 120px">Party Type</th>
+    <td><%= cp.personType %></td>
+
+    <th style="width: 120px">Party Name</th>
+    <td><%= cp.personName %></td>
+
+    <th style="width: 120px">Party ID</th>
+    <td><%= cp.personBusinessId %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= PAYMENT META ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Payment Details</h4>
+
+<% if (cp.isReversal) { %>
+<div
+  style="
+    margin: 4px 0 10px;
+    font-size: 14px;
+    color: #b91c1c;
+    border-left: 3px solid #b91c1c;
+    padding-left: 8px;
+  "
+>
+  <strong>Reversal of Payment ID:</strong> <%= cp.paymentId %>
+</div>
+<% } %>
+
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 140px">Payment ID</th>
+    <td><%= receiptId %></td>
+
+    <th style="width: 140px">Mode</th>
+    <td><%= cp.isReversal ? 'REVERSAL' : cp.mode %></td>
+
+    <th style="width: 140px">Date</th>
+    <td><%= new Date(cp.date).toDateString() %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= CROP PAYMENT DETAILS ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Crop-wise Payment Details</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Crop</th>
+      <th>Crop ID</th>
+      <th class="right">Qty (Qtl)</th>
+      <th class="right">Rate</th>
+      <th class="right">Total</th>
+      <th class="right">Pending<br />Before</th>
+      <th class="right"><%= cp.isReversal ? "Reverse" : "Paid" %></th>
+      <th class="right">Pending<br />After</th>
+      <th class="center">Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% cp.payments.forEach(p => { %>
+    <tr>
+      <td><%= p.cropType %></td>
+
+      <td><%= p.cropBusinessId %></td>
+
+      <td class="right"><%= p.quantity %></td>
+
+      <td class="right">₹ <%= p.pricePerQuintal %></td>
+
+      <td class="right">₹ <%= p.totalAmount %></td>
+
+      <td class="right">
+        ₹ <%= cp.isReversal ? p.pendingBefore - Math.abs(p.paidAmount) :
+        p.pendingBefore %>
+      </td>
+
+      <td class="right">₹ <%= Math.abs(p.paidAmount) %></td>
+
+      <td class="right">₹ <%= p.pendingAfter %></td>
+
+      <td class="center">
+        <strong><%= p.statusAfter %></strong>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<br />
+
+<!-- ================= PAYMENT SUMMARY ================= -->
+<hr />
+<h4 style="margin: 18px 0 8px; color: #14532d">Payment Summary</h4>
+
+<table style="width: 360px; margin-left: auto">
+  <tr>
+    <td><%= cp.isReversal ? "Pending Before" : "Total Crop Amount"%></td>
+    <td class="right">₹ <%= cp.totalCropAmount %></td>
+  </tr>
+  <tr>
+    <td><%=cp.isReversal ? "Reversed Amount" : "Paid Amount"%></td>
+    <td class="right">₹ <%= cp.amountPaid %></td>
+  </tr>
+  <tr>
+    <th>Pending Amount</th>
+    <th class="right">₹ <%= cp.pendingAmount %></th>
+  </tr>
+  <tr>
+    <td>Status</td>
+    <td class="right">
+      <strong><%=cp.status %></strong>
+    </td>
+  </tr>
+</table>
+
+<%- include("../includes/signature") %>

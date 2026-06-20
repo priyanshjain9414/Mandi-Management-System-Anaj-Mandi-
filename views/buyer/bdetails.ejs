@@ -1,0 +1,164 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <!-- ================= HEADER ================= -->
+  <div class="d-flex justify-content-between align-items-center mb-1">
+    <h3 class="fw-bold text-success">
+      <i class="fa-solid fa-user me-2 text-success"></i> Buyer Details
+      <span class="badge bg-success ms-2"><%= buyer.buyerId %></span>
+    </h3>
+
+    <div class="d-flex gap-2">
+      <% if (cropSummary.count === 0) { %>
+      <form method="POST" action="/buyer/<%= buyer.buyerId %>?_method=DELETE">
+        <button class="btn btn-danger">
+          <i class="fa-solid fa-trash me-1"></i> Delete Buyer
+        </button>
+      </form>
+      <% } %>
+
+      <a href="/buyer" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back
+      </a>
+    </div>
+  </div>
+
+  <!-- ================= PERSONAL INFO ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Personal Information</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <strong>Name</strong>
+          <p class="mb-0"><%= buyer.name %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Buyer ID</strong>
+          <p class="mb-0"><%= buyer.buyerId %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Mobile</strong>
+          <p class="mb-0"><%= buyer.mobile %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>Enrolled Date</strong>
+          <p class="mb-0"><%= buyer.createdAt.toLocaleDateString("en-IN") %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>City</strong>
+          <p class="mb-0"><%= buyer.city %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>State</strong>
+          <p class="mb-0"><%= buyer.state %></p>
+        </div>
+
+        <div class="col-md-6">
+          <strong>ZIP</strong>
+          <p class="mb-0"><%= buyer.zip %></p>
+        </div>
+
+        <div class="col-md-12">
+          <strong>Address</strong>
+          <p class="mb-0">
+            <%= buyer.address %>, <%= buyer.city %>, <%= buyer.state %> - <%=
+            buyer.zip %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PURCHASE SUMMARY ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Purchase Summary</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3 text-center">
+        <div class="col-md-3">
+          <div class="card h-100 border-success shadow-sm">
+            <div class="card-body">
+              <h6 class="text-muted">Total Purchases</h6>
+              <h4 class="fw-bold text-success"><%= cropSummary.count %></h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card h-100 border-primary shadow-sm">
+            <div class="card-body">
+              <h6 class="text-muted">Total Amount</h6>
+              <h4 class="fw-bold text-primary">₹ <%= cropSummary.total %></h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card h-100 border-success shadow-sm">
+            <div class="card-body">
+              <h6 class="text-muted">Paid</h6>
+              <h4 class="fw-bold text-success">₹ <%= cropSummary.paid %></h4>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card h-100 border-danger shadow-sm">
+            <div class="card-body">
+              <h6 class="text-muted">Pending</h6>
+              <h4 class="fw-bold text-danger">₹ <%= cropSummary.pending %></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BUYER ACTIONS ================= -->
+  <div class="card shadow-sm mb-5">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Buyer Actions</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4 d-grid">
+          <a
+            href="/buyer/<%= buyer.buyerId %>/crop/new"
+            class="btn btn-outline-success py-2"
+          >
+            <i class="fa-solid fa-wheat-awn me-1"></i> Add Purchase
+          </a>
+        </div>
+
+        <div class="col-md-4 d-grid">
+          <a
+            href="/buyer/<%= buyer.buyerId %>/crops"
+            class="btn btn-outline-primary py-2"
+          >
+            <i class="fa-solid fa-receipt me-1"></i> View Purchases
+          </a>
+        </div>
+
+        <div class="col-md-4 d-grid">
+          <a
+            href="/buyer/<%= buyer.buyerId %>/transaction"
+            class="btn btn-outline-warning py-2"
+          >
+            <i class="fa-solid fa-clock-rotate-left me-1"></i> Payment History
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

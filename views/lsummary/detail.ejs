@@ -1,0 +1,143 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+  <!-- ================= HEADER ================= -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-success">
+      <i class="fa-solid fa-chart-line me-2 text-success"></i>
+      Loan Summary Dashboard
+      <span class="badge bg-success ms-2">GLOBAL</span>
+    </h3>
+
+    <div class="d-flex gap-2">
+      <a href="/loan/summary/list" class="btn btn-outline-primary">
+        <i class="fa-solid fa-list me-1"></i> All Loans
+      </a>
+      <a href="/loan/summary/transaction" class="btn btn-outline-primary">
+        <i class="fa-solid fa-receipt me-1"></i>Transactions
+      </a>
+
+      <a href="javascript:history.back()" class="btn btn-outline-secondary">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back
+      </a>
+    </div>
+  </div>
+
+  <!-- ================= SUMMARY INFO ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Loan Overview</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <strong> Total Loans</strong>
+          <p class="fw-bold mb-0"><%= summary.totalLoans %></p>
+        </div>
+
+        <div class="col-md-4">
+          <strong>Ongoing Loans</strong>
+          <p class="fw-bold text-warning mb-0"><%= summary.ongoingLoans %></p>
+        </div>
+
+        <div class="col-md-4">
+          <strong>Finished Loans</strong>
+          <p class="fw-bold text-success mb-0"><%= summary.finishedLoans %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FINANCIAL SUMMARY ================= -->
+  <div class="row row-cols-1 row-cols-md-3 g-3 text-center mb-4">
+    <!-- TOTAL LOAN GIVEN -->
+    <div class="col">
+      <div class="card border-primary shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Total Loan Given</h6>
+          <h4 class="fw-bold text-primary">
+            ₹ <%= summary.totalLoanGiven.toFixed(2) %>
+          </h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOTAL INTEREST -->
+    <div class="col">
+      <div class="card border-success shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Interest Accrued</h6>
+          <h4 class="fw-bold text-success">
+            ₹ <%= summary.totalInterestAccrued.toFixed(2) %>
+          </h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOTAL PAYABLE -->
+    <div class="col">
+      <div class="card border-warning shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Total Payable</h6>
+          <h4 class="fw-bold text-warning">
+            ₹ <%= summary.totalPayableAmount.toFixed(2) %>
+          </h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ================= PAYMENT SUMMARY ================= -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+      <h5 class="mb-0">Payment Summary</h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3 text-center">
+        <div class="col-md-4">
+          <div class="card border-success h-100">
+            <div class="card-body">
+              <h6 class="text-muted">Total Paid</h6>
+              <h5 class="text-success fw-bold">
+                ₹ <%= summary.totalPaidAmount.toFixed(2) %>
+              </h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card border-danger h-100">
+            <div class="card-body">
+              <h6 class="text-muted">Total Pending</h6>
+              <h5 class="text-danger fw-bold">
+                ₹ <%= summary.totalPendingAmount.toFixed(2) %>
+              </h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card border-info h-100">
+            <div class="card-body">
+              <h6 class="text-muted">Average Interest Rate</h6>
+              <h5 class="fw-bold text-info">
+                <%= summary.averageInterestRate.toFixed(2) %> %
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LAST UPDATED ================= -->
+  <div class="text-end text-muted">
+    <i class="fa-solid fa-clock me-1"></i>
+    Last Updated: <%= summary.lastUpdatedAt.toLocaleString('en-IN', { dateStyle:
+    'medium', timeStyle: 'short' }) %>
+  </div>
+</div>

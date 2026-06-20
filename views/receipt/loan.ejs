@@ -1,0 +1,143 @@
+<% layout("layouts/receipt") %> <%- include("../includes/receipt-header") %>
+
+<h3 style="text-align: center; margin: 20px 0; color: #14532d">Loan Receipt</h3>
+
+<!-- ================= PARTY DETAILS ================= -->
+<table style="margin-bottom: 15px">
+  <tr>
+    <th style="width: 120px">Party Type</th>
+    <td>FARMER</td>
+
+    <th style="width: 120px">Farmer Name</th>
+    <td><%= loan.personName %></td>
+
+    <th style="width: 120px">Farmer ID</th>
+    <td><%= loan.farmerBusinessId %></td>
+  </tr>
+</table>
+
+<hr />
+
+<!-- ================= LOAN DETAILS ================= -->
+<h4 style="margin-bottom: 10px; color: #14532d">Loan Details</h4>
+
+<table>
+  <tbody>
+    <tr>
+      <th>Loan ID</th>
+      <td><%= loan.loanId %></td>
+
+      <th>Date Given</th>
+      <td><%= loan.createdAt.toDateString() %></td>
+    </tr>
+
+    <tr>
+      <th>Loan Amount</th>
+      <td>₹ <%= loan.loanAmount %></td>
+
+      <th>Interest Rate</th>
+      <td><%= loan.interest %> %</td>
+    </tr>
+
+    <tr>
+      <th>Interest Amount</th>
+      <td>₹ <%= loan.interestAmount %></td>
+
+      <th>Total Payable</th>
+      <td>₹ <%= loan.loanAmount + loan.interestAmount %></td>
+    </tr>
+
+    <tr>
+      <th>Status</th>
+      <td colspan="3">
+        <strong><%= loan.status %></strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ================= PAYMENT HISTORY ================= -->
+<br />
+<% if (payments && payments.length > 0) { %>
+
+<hr />
+
+<h4 style="margin-bottom: 12px; color: #14532d">Payment History</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th class="center">Date</th>
+      <th class="center">Mode</th>
+      <th class="right">Pending<br />Before</th>
+      <th class="center">Period<br />(Days)</th>
+      <th class="right">Interest<br />Amount</th>
+      <th class="right">Payable<br />Before</th>
+      <th class="right">Paid</th>
+      <th class="right">Pending<br />After</th>
+      <th class="center">Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% payments.forEach(p => { const tx = p.payments.find(x =>
+    x.loanId.toString() === loan._id.toString() ); if (!tx) return; %>
+
+    <tr>
+      <td><%= new Date(p.createdAt).toLocaleDateString('en-IN') %></td>
+
+      <td class="center"><%= p.isReversal ? 'REVERSAL' : p.mode %></td>
+
+      <td class="right">
+        ₹ <%= p.isReversal ? tx.totalPayableBefore - Math.abs(tx.paidAmount) :
+        tx.principalPendingBefore %>
+      </td>
+
+      <td class="center"><%= p.isReversal ? '—' : tx.periodIndays %></td>
+
+      <td class="right">₹ <%= tx.interestAmount %></td>
+
+      <td class="right">
+        ₹ <%= p.isReversal ? tx.principalPendingBefore-Math.abs(tx.paidAmount) :
+        tx.totalPayableBefore %>
+      </td>
+
+      <td class="right">₹ <%= tx.paidAmount %></td>
+
+      <td class="right">₹ <%= tx.pendingAmountAfter %></td>
+
+      <td class="center">
+        <strong><%= tx.loanStatusAfter %></strong>
+      </td>
+    </tr>
+
+    <% }) %>
+  </tbody>
+</table>
+
+<br />
+
+<% } %>
+
+<!-- ================= LOAN PAYMENT SUMMARY ================= -->
+<hr />
+<h4 style="margin: 18px 0 8px; color: #14532d">Payment Summary</h4>
+
+<table style="width: 320px; margin-left: auto">
+  <tr>
+    <td>Total Payable</td>
+    <td class="right">₹ <%= loan.loanAmount + loan.interestAmount %></td>
+  </tr>
+
+  <tr>
+    <td>Total Paid</td>
+    <td class="right">₹ <%= loan.paidAmount %></td>
+  </tr>
+
+  <tr>
+    <th>Pending Amount</th>
+    <th class="right">₹ <%= loan.pendingAmount ?? loan.loanAmount %></th>
+  </tr>
+</table>
+
+<%- include("../includes/signature") %>
